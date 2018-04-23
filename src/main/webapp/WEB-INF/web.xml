@@ -1,7 +1,62 @@
-<!DOCTYPE web-app PUBLIC
- "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
- "http://java.sun.com/dtd/web-app_2_3.dtd" >
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://java.sun.com/xml/ns/javaee"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+         http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         id="WebApp_ID" version="2.5">
 
-<web-app>
-  <display-name>Archetype Created Web Application</display-name>
+    <display-name>Archetype Created Web Application</display-name>
+
+    <filter>
+        <filter-name>characterEncodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>characterEncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!--ServletRequestListener监听HTTP请求事件，Web服务器接收的每次请求都会通知该监听器-->
+    <!--RequestContextListener将Spring容器与Web容器结合的更加密切-->
+    <listener>
+        <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+    </listener>
+
+    <!--ContextLoaderListener作用就是启动Web容器时，自动装配ApplicationContext的配置信息。因为它实现了ServletContextListener这个接口，-->
+    <!--在web.xml配置这个监听器，启动容器时，就会默认执行它实现的方法-->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:applicationContext.xml</param-value>
+    </context-param>
+
+    <!--spring MVC的配置-->
+    <servlet>
+        <servlet-name>dispatcher</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+        <!--本项目中spring mvc的配置配置文件位置和文件名均为默认，是放在WEB-INF目录下的dispatcher-servlet.xml-->
+        <!--所以不需要进行配置，如果想自定义配置文件名和位置，使用下面的语句进行配置-->
+        <!--<init-param>-->
+        <!--<param-name>contextConfigLocation</param-name>-->
+        <!--<param-value>文件路径/spring mvc配置文件名</param-value>-->
+        <!--</init-param>-->
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>dispatcher</servlet-name>
+        <url-pattern>*.do</url-pattern>
+    </servlet-mapping>
+
 </web-app>
+

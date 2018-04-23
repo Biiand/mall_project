@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Logback 配置文件的语法非常灵活。正因为灵活，所以无法用 DTD 或 XML schema 进行定义-->
+
+<!--scan=true,当配置文件有变化时重新加载文件
+    scanPeriod，设置检测文件是否有变化的频率，不给时间单位默认是毫秒
+    debug,设置是否打印logback自身运行的内部日志，用于检测logback的运行，默认为false-->
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+    <!--appender负责写日志的组件,ConsoleAppender是把日志输出到控制台-->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoding>UTF-8</encoding>
+        <encoder>
+            <!--encoding pattern,设置日志是输出的格式，%d:日期；%p:日志级别；%c:产生记录的类名；%t:产生日志的线程；%m:程序产生的信息；%n:换行-->
+            <pattern>[%d{HH:mm:ss.SSS}][%p][%c{40}][%t] %m%n</pattern>
+        </encoder>
+        <!--ThresholdFilter，记录level不小于DEBUG级别的日志-->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+    </appender>
+
+    <!--FileAppender：将日志记录到指定文件；
+        RollingFileAppender：滚动记录文件，先将日志记录到指定文件，当符合某个条件时，将日志记录到新的文件；
+        即按rollingPolicy指定的条件对日志进行分割，当符合条件（如到达指定时间或日志大小达到指定容量）时根据fileNamePattern指定
+        的目录和命名规则新建一个日志文件，将新产生的日志信息存储到新的文件里，这样就避免了所有的日志都不断累积在一个文件里，更便于归档和管理-->
+    <appender name="mmall" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--<File>d:/mmalllog/mmall.log</File>
+            指定保存日志的文件-->
+        <File>D:/MyApps/IntelliJ IDEA/IdeaProjects/logs/mmall_log/mmall.log</File>
+        <!--RollingPolicy：负责日志文件的切换以及重命名；
+            TimeBasedRollingPolicy：基于时间的滚动策略，多长时间滚动日志根据fileNamePattern中%d{}内的日期格式指定，
+            %d{yyyy-MM-dd}表示每日一更，过0点后产生的日志就存在新的日志文件里
+            支持自动压缩日志文件，通过设置fileNamePattern的值以 .gz 或者 .zip 结尾开启-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>D:/MyApps/IntelliJ IDEA/IdeaProjects/logs/mmall_log/mmall.log.%d{yyyy-MM-dd}.gz</fileNamePattern>
+            <append>true</append>
+            <!--日志文件的最大保存时间，超过这个时间日志就会被自动删除，时间单位和由滚动日志的周期一致（我的理解）-->
+            <maxHistory>10</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>[%d{HH:mm:ss.SSS}][%p][%c{40}][%t] %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--专门记录ERROR级别的日志-->
+    <appender name="error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--<File>d:/mmalllog/error.log</File>-->
+        <File>D:/MyApps/IntelliJ IDEA/IdeaProjects/logs/mmall_log/error.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>D:/MyApps/IntelliJ IDEA/IdeaProjects/logs/mmall_log/error.log.%d{yyyy-MM-dd}.gz</fileNamePattern>
+            <!--<fileNamePattern>d:/mmalllog/error.log.%d{yyyy-MM-dd}.gz</fileNamePattern>-->
+            <append>true</append>
+            <maxHistory>10</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>[%d{HH:mm:ss.SSS}][%p][%c{40}][%t] %m%n</pattern>
+        </encoder>
+        <!--LevelFilter，通过设置onMatch和onMismatch来过滤日志，只记录ERROR级别的日志-->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+
+    <!--appender，root，logger之间的关系：
+        appender是真正写日志的组件，日志输出的执行者，设置日志的输出形式，没有appender日志就无法输出，
+        root设定项目日志最基本的输出级别和输出形式（appender）,
+        logger用来更具体的限定某一个包或类的日志输出级别和输出形式（appender），该设置会覆盖root的设置，
+        logger可以引用0个或多个appender，引用0个时logger本身并不能输出日志信息，当additivity="true"时（默认为true）,
+        将logger拦截的信息向上传递给root，通过root引用的appender对日志信息进行输出，
+        当logger引用了appender时，通常就设置additivity="false"，否则信息向上传递给root会出现重复输出-->
+
+
+    <!--root节点，必选，可以理解为根logger，只有level一个属性，用来指定最基本的日志输出级别，会被logger的级别覆盖-->
+    <root level="DEBUG">
+        <appender-ref ref="console"/>
+        <appender-ref ref="error"/>
+    </root>
+
+    <!--logger：用来具体设置某一个包或某一个类的日志输出级别、以及指定<appender>
+        name,指定受此logger约束的包或类；
+        additivity,是否向上级logger传递日志信息；
+        level，logger的日志记录级别-->
+    <logger name="com.mmall" additivity="false" level="INFO" >
+        <appender-ref ref="mmall" />
+        <appender-ref ref="console"/>
+        <appender-ref ref="error"/>
+    </logger>
+
+
+
+    <!-- geelynote mybatis log 日志 -->
+
+    <logger name="com.mmall.dao" level="DEBUG"/>
+
+    <!--<logger name="com.ibatis.sqlmap.engine.impl.SqlMapClientDelegate" level="DEBUG" >-->
+        <!--<appender-ref ref="console"/>-->
+    <!--</logger>-->
+
+    <!--<logger name="java.sql.Connection" level="DEBUG">-->
+        <!--<appender-ref ref="console"/>-->
+    <!--</logger>-->
+    <!--<logger name="java.sql.Statement" level="DEBUG">-->
+        <!--<appender-ref ref="console"/>-->
+    <!--</logger>-->
+
+    <!--<logger name="java.sql.PreparedStatement" level="DEBUG">-->
+        <!--<appender-ref ref="console"/>-->
+    <!--</logger>-->
+
+
+
+</configuration>
