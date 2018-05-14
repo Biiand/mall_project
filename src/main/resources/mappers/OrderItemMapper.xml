@@ -30,6 +30,21 @@
     where id = #{id,jdbcType=INTEGER}
   </select>
 
+  <select id="selectByUserIdAndOrderNo" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="Base_Column_List"/>
+    from mmall_order_item
+    where user_id = #{userId}
+    and order_no = #{orderNo}
+  </select>
+
+  <select id="selectByOrderNo" resultMap="BaseResultMap" parameterType="long">
+    select
+    <include refid="Base_Column_List"/>
+    from mmall_order_item
+    where order_no = #{orderNo}
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from mmall_order_item
     where id = #{id,jdbcType=INTEGER}
@@ -118,6 +133,20 @@
         now(),
       </if>
     </trim>
+  </insert>
+
+  <!--foreach中的open和close是将foreach循环完成后的整体包括在内，不是每循环一次就包括一次，separator才是对每次循环进行分隔-->
+  <insert id="batchInsert" parameterType="list">
+     insert into mmall_order_item (id, user_id, order_no,
+      product_id, product_name, product_image,
+      current_unit_price, quantity, total_price,
+      create_time, update_time)
+      values
+      <foreach collection="orderItemList" item="item" index="index" separator=",">
+        (#{item.id},#{item.userId},#{item.orderNo},#{item.productId},#{item.productName},
+        #{item.productImage},#{item.currentUnitPrice},
+        #{item.quantity},#{item.totalPrice},now(),now())
+      </foreach>
   </insert>
 
   <update id="updateByPrimaryKeySelective" parameterType="com.mmall.pojo.OrderItem">

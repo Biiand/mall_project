@@ -212,7 +212,8 @@
     </dependency>
 
 
-    <!-- alipay -->
+    <!-- alipay依赖的除alipay-sdk和alipay-trade-sdk外的jar,这两个jar需要手动添加，因为公共仓库没有，
+    剩余的这几个就可以使用maven进行控制，注意版本号和官方demo保持一致，避免出问题 -->
     <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
@@ -271,7 +272,11 @@
         </configuration>
       </plugin>
 
-      <!-- geelynote maven的核心插件之-complier插件默认只支持编译Java 1.4，因此需要加上支持高版本jre的配置，在pom.xml里面加上 增加编译插件 -->
+      <!-- geelynote maven的核心插件之-complier插件默认只支持编译Java 1.4，因此需要加上支持高版本jre的配置，
+      在pom.xml里面加上 增加编译插件：将本地添加的jar也进行加载（compilerArguments设定了在编译时进行加载），
+      在本机上因为已经手动添加了对这些jar的依赖，所以本地运行不会出问题，但如果不添加这个插件，那在将项目打包的时候
+      就不会处理本地添加的jar,这样发布到服务器上的时候就会因为没有这些jar而出现ClassNotFound，所以要用这个插件将
+      本地添加的jar一起发布到服务器上-->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -280,6 +285,7 @@
           <target>1.8</target>
           <encoding>UTF-8</encoding>
           <compilerArguments>
+            <!--指定本地添加的jar所在的目录，这个目录也是maven创建的所有依赖所在的目录，这样是方便统一管理-->
             <extdirs>${project.basedir}/src/main/webapp/WEB-INF/lib</extdirs>
           </compilerArguments>
         </configuration>

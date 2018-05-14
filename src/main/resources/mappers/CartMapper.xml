@@ -25,9 +25,58 @@
     where id = #{id,jdbcType=INTEGER}
   </select>
 
+  <select id="selectByUserIdAndProductId" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="Base_Column_List"/>
+    from mmall_cart
+    where user_id = #{userId}
+    and product_id = #{productId}
+  </select>
+
+  <select id="selectCartByUserId" resultMap="BaseResultMap" parameterType="integer">
+    select
+    <include refid="Base_Column_List"/>
+    from mmall_cart
+    where user_id = #{userId}
+  </select>
+
+  <select id="selectProductCheckedStatusByUserId" resultType="java.lang.Integer" parameterType="integer">
+    select count(1)
+    from mmall_cart
+    where user_id = #{userId}
+    and checked = 0
+  </select>
+
+  <!--IFNULL(expr1,expr2)函数，如果expr1 == null则返回expr2，否则返回expr1；
+      还有一个NULLIF(expr1,expr2)，如果expr1 == expr2则返回null，否则返回expr1-->
+  <select id="selectCartProductCount" resultType="java.lang.Integer" parameterType="integer">
+    select IFNULL(sum(quantity),0) as count
+    from mmall_cart
+    where user_id = #{userId}
+  </select>
+
+  <select id="selectSelectedItemsByUserId" resultMap="BaseResultMap" parameterType="integer">
+    SELECT
+    <include refid="Base_Column_List"/>
+    from mmall_cart
+    where user_id = #{userId}
+    and checked = 1
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from mmall_cart
     where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <delete id="deleteByUserIdAndproductId" parameterType="map">
+    delete from mmall_cart
+    where user_id = #{userId}
+    <if test="productIdList != null">
+      and product_id in
+      <foreach collection="productIdList" item="item" index="index" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
   </delete>
 
   <insert id="insert" parameterType="com.mmall.pojo.Cart">
@@ -123,5 +172,15 @@
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = now()
     where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="checkedOrUncheckedProduct" parameterType="map">
+    update mmall_cart
+    set checked = #{checked},
+    update_time = now()
+    where user_id = #{userId}
+    <if test="productId != null">
+      and product_id = #{productId}
+    </if>
   </update>
 </mapper>

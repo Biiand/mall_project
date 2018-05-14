@@ -33,6 +33,36 @@
     where id = #{id,jdbcType=INTEGER}
   </select>
 
+  <select id="selectByUserIdAndOrderNo" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="Base_Column_List"/>
+    from mmall_order
+    where user_id = #{userId}
+    and order_no = #{orderNo}
+  </select>
+
+  <select id="selectByOrderNo" resultMap="BaseResultMap" parameterType="long">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM  mmall_order
+    where order_no = #{orderNo}
+  </select>
+
+  <select id="selectByUserId" resultMap="BaseResultMap" parameterType="integer">
+    SELECT
+    <include refid="Base_Column_List"/>
+    from mmall_order
+    where user_id = #{userId}
+    order by create_time desc
+  </select>
+
+  <select id="selectAllOrder" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    from mmall_order
+    order by create_time DESC
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from mmall_order
     where id = #{id,jdbcType=INTEGER}
@@ -142,6 +172,7 @@
       </if>
     </trim>
   </insert>
+
 
   <update id="updateByPrimaryKeySelective" parameterType="com.mmall.pojo.Order">
     update mmall_order
