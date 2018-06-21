@@ -82,9 +82,5 @@ public class ServiceResponse<T> implements Serializable {
     public static <T> ServiceResponse<T> createByErrorCodeMessage(int errorCode,String errorMessage){
         return new ServiceResponse<T>(errorCode,errorMessage);
     }
-    ////    main方法生成快捷输入：psvm
-//    public static void main(String[] args) {
-////        快捷输入：sout
-//        System.out.println();
-//    }
+
 }

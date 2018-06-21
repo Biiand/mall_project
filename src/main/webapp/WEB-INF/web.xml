@@ -36,12 +36,14 @@
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
 
+    <!--导入Spring的配置文件，这里使用<context-param>设置为全局变量，也可以在DispatcherServlet中设置为init-param,
+        因为spring配置文件就只有Spring框架才需要使用-->
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>classpath:applicationContext.xml</param-value>
     </context-param>
 
-    <!--spring MVC的配置-->
+    <!--spring MVC的配置，核心类，DispatcherServlet-->
     <servlet>
         <servlet-name>dispatcher</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
@@ -55,6 +57,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
+        <!--*.do这种方式是早期的一种设计URL的方式，不符合现在RESTFul的URL设计规范，RESTFul的URL不应该有任何后缀结尾，所以直接就匹配“/”-->
         <url-pattern>*.do</url-pattern>
     </servlet-mapping>
 

@@ -6,24 +6,30 @@ import com.mmall.common.ServiceResponse;
 import com.mmall.pojo.User;
 import com.mmall.service.ICartService;
 import com.mmall.vo.CartVo;
+import com.sun.glass.ui.Application;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
+import java.io.InputStream;
 
 /**
  * Created by hasee on 2018/5/2.
  */
 @Controller
-@RequestMapping("/cart/")
+@RequestMapping("/cart/")//定义模块的url
 public class CartController {
 
     @Autowired
     ICartService iCartService;
 
-    @RequestMapping("add.do")
+
+    @RequestMapping(value = "add.do")
+//    添加ResponseBody就告诉SpringMVC将返回的数据转换为json格式，前提是在RequestMapping中添加produces = "application/json;charset = UTF-8"属性，
+//    或者在本例中在springMVC的配置文件中添加转换json的converter
+//    不添加的话就是传统的会将返回值当作jsp的文件名进行处理
     @ResponseBody
     public ServiceResponse<CartVo> add(HttpSession session, Integer productId, Integer count){
         User user = (User) session.getAttribute(Const.CURRENT_USER);
@@ -139,7 +145,5 @@ public class CartController {
         }
         return iCartService.getSumOfProductsInCart(user.getId());
     }
-
-
 
 }

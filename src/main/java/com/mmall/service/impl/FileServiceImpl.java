@@ -38,7 +38,7 @@ public class FileServiceImpl implements IFileService {
             fileDir.setWritable(true);
 //            mkdir:创建path路径下的这个文件夹
 //            fileDir.mkdir();
-//            mkdir:创建path路径下的这个文件夹是，包括需要但不存在的父文件夹
+//            mkdirs:创建path路径下的这个文件夹是，包括需要但不存在的父文件夹
             fileDir.mkdirs();
         }
 

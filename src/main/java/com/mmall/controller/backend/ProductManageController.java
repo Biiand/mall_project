@@ -132,10 +132,10 @@ public class ProductManageController {
             }
 //           组装访问图片的url
             String url = PropertiesUtil.getProperty("ftp.server.http.prefix")+targetFileName;
-            Map fileMfap = new HashMap<>();
-            fileMfap.put("uri",targetFileName);
-            fileMfap.put("url",url);
-            return ServiceResponse.createBySuccess(fileMfap);
+            Map fileMap = new HashMap<>();
+            fileMap.put("uri",targetFileName);
+            fileMap.put("url",url);
+            return ServiceResponse.createBySuccess(fileMap);
         }
         return response;
     }

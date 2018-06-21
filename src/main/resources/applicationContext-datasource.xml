@@ -61,10 +61,17 @@
         <property name="validationQuery" value="SELECT 1 FROM dual"/>
     </bean>
 
-
+    <!--本项目中没有mybatis的全局配置文件，如果有的话在这里进行引入-->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
-        <property name="mapperLocations" value="classpath*:mappers/*Mapper.xml"></property>
+        <property name="mapperLocations" value="classpath*:mappers/*Mapper.xml"/>
+
+        <!--引入mybatis的全局文件-->
+        <!--<property name="configLocation" value="classpath:mybatis_config.xml"/>-->
+
+        <!--扫描pojo所在的包，这样在mapper.xml中使用到pojo类作为传入参数或返回结果集时就可以直接使用类名，不用
+        使用类的全路径名，dang当要扫描多个包时，每个包之间使用“;”隔开-->
+    <property name="typeAliasesPackage" value="com/mmall/pojo"/>
 
         <!-- 分页插件 -->
         <property name="plugins">
@@ -81,18 +88,25 @@
 
     </bean>
 
-    <!--使用自动扫描的方式创建mapper bean-->
+    <!--使用自动扫描的方式创建mapper bean，即自动扫描dao层的接口包，mybatis通过动态代理实现接口方法，并将实例注入到spring容器中-->
     <bean name="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!--使用sqlSessionFactoryBeanName注入sqlSessionFactory,通常只有在有多个dataSource的时候才需要配置，单个dateSource的情况下可以省略-->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+
         <property name="basePackage" value="com.mmall.dao"/>
     </bean>
 
-    <!--配置事务管理-->
+    <!--配置事务管理，实际上本项目并没有使用到事务-->
     <!-- 事务管理的核心类TransactionManager -->
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource"/>
         <property name="rollbackOnCommitFailure" value="true"/>
     </bean>
-    <!-- 使用@Transactional进行声明式事务管理需要声明下面这行 -->
+    <!-- 使用@Transactional进行声明式事务管理需要声明下面这行，proxy-target-class属性是配置是使用AOP时是
+         使用基于接口的JDK代理（设为false,默认）还是使用基于实体类的cglib代理（设为true），
+         使用cglib代理后就不能使用JDK代理了，此时在接口上的@annotation注解就无效了，运行代理时要是没有找到
+         对应的实体类，就会报错，实际上默认的使用JDK代理时spring会自动判断，如果目标类是接口就使用JDK代理，不是就
+         使用cglib代理，所以这个设置可以不管，默认就行-->
     <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
-
+    
 </beans>

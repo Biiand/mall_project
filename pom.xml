@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.daibin.mmall</groupId>
@@ -32,6 +33,7 @@
   </properties>
 
   <dependencies>
+    <!--jnnit用于单元测试的依赖-->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -39,49 +41,61 @@
       <scope>test</scope>
     </dependency>
 
+    <!--tomcat的依赖-->
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-servlet-api</artifactId>
       <version>7.0.64</version>
     </dependency>
 
+    <!--spring的依赖，问题：为什么没有配置spring core，bean，context等核心？-->
+    <!--1、spring Web层的相关依赖，问题：为什么没有配置web用于启动tomcat等web容器？-->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
       <version>${org.springframework.version}</version>
     </dependency>
 
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-oxm</artifactId>
-      <version>${org.springframework.version}</version>
-    </dependency>
-
+    <!--2、spring Dao层的相关依赖，jdbc,tx-->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-jdbc</artifactId>
       <version>${org.springframework.version}</version>
     </dependency>
-
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-tx</artifactId>
       <version>${org.springframework.version}</version>
     </dependency>
 
+    <!--4、junit进行单元测试时启动spring容器的相关依赖-->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
       <version>${org.springframework.version}</version>
     </dependency>
 
+    <!--oxm(object,xml,mapper),用于将pojo对象和xml文件进行转换-->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-oxm</artifactId>
+      <version>${org.springframework.version}</version>
+    </dependency>
 
+    <!--spring AOP的依赖-->
     <dependency>
       <groupId>org.aspectj</groupId>
       <artifactId>aspectjweaver</artifactId>
       <version>1.7.3</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.aspectj</groupId>
+      <artifactId>aspectjrt</artifactId>
+      <version>1.6.11</version>
+    </dependency>
+
+    <!--mybatis的依赖和mybatis整合spring的依赖-->
     <dependency>
       <groupId>org.mybatis</groupId>
       <artifactId>mybatis-spring</artifactId>
@@ -93,18 +107,26 @@
       <version>${org.mybatis.version}</version>
     </dependency>
 
-    <dependency>
-      <groupId>org.aspectj</groupId>
-      <artifactId>aspectjrt</artifactId>
-      <version>1.6.11</version>
-    </dependency>
 
+
+    <!--对象转json的支持，没有使用spring默认的转换类。
+        Data Mapper package is a high-performance data binding package
+        built on Jackson JSON processor
+    -->
     <dependency>
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-mapper-asl</artifactId>
       <version>1.9.12</version>
     </dependency>
 
+    <!--数据库连接-->
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>5.1.6</version>
+    </dependency>
+
+    <!--数据库连接池，另一种常见的是c3p0-->
     <dependency>
       <groupId>commons-dbcp</groupId>
       <artifactId>commons-dbcp</artifactId>
@@ -112,7 +134,7 @@
       <!--<scope>runtime</scope>-->
     </dependency>
 
-
+    <!--logback依赖，classic是整合slf4j的jar,core是日志的核心类库，slf4j是一种日志的规范的接口，logback,log4j等都是该接口的实现-->
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
@@ -126,33 +148,28 @@
       <scope>compile</scope>
     </dependency>
 
-    <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
-      <version>5.1.6</version>
-    </dependency>
-
+    <!--guava类库的依赖-->
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
       <version>20.0</version>
     </dependency>
 
-
+    <!--通用的工具类-->
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>3.5</version>
     </dependency>
 
-
+    <!--通用的集合工具类-->
     <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
       <version>3.2.1</version>
     </dependency>
 
-
+    <!--提供DateTimeUtil中的Date和DateTime类型-->
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
@@ -192,7 +209,6 @@
 
 
     <!-- mybatis pagerhelper插件的依赖 -->
-
     <dependency>
       <groupId>com.github.pagehelper</groupId>
       <artifactId>pagehelper</artifactId>

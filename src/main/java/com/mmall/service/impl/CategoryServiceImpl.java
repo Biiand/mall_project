@@ -74,7 +74,8 @@ public class CategoryServiceImpl implements ICategoryService {
         Set<Category> categorySet = new HashSet<>();
         findChildrenCategory(categorySet,categoryId);
 
-//        这里最后只返回了一个id的集合，所以查询的时候也可以只将id查出来
+//        这里最后只返回了一个id的集合，所以查询的时候也可以只将id查出来，
+//          只返回id是因为这个方法实在商品查询的时候被调用，只需要使用id
         List<Integer> categoryIdList = new ArrayList<>();
         if(categorySet != null){
             for(Category category : categorySet){

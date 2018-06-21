@@ -464,6 +464,7 @@ public class OrderServiceImpl implements IOrderService {
         orderForUpdate.setUpdateTime(new Date());
         int rowCount = orderMapper.updateByPrimaryKeySelective(orderForUpdate);
         if(rowCount > 0){
+//            没有删除被取消的订单的商品明细是因为被取消的订单也会保存在用户的记录里面，以后可能需要查询明细
             List<OrderItem> orderItemList = orderItemMapper.selectByUserIdAndOrderNo(userId,orderNo);
 //            更新商品库存，没对orderItemList做校验是因为创建订单时就确保了订单和明细都要创建成功
             this.updateProductStock(orderItemList,Const.UpdateProductStockEnum.ADD.getCode());
@@ -515,7 +516,7 @@ public class OrderServiceImpl implements IOrderService {
         List<Order> orderList = orderMapper.selectByUserId(userId);
         List<OrderVo> orderVoList = this.assembleOrderVoList(orderList,userId);
 
-//        mybatispagehepler的原理，它是用aop做的切面。
+//        mybatisPageHelper的原理，它是用aop做的切面。
 //          所以必须和之前的dao层有请求才会添加分页相关信息，如果直接放 分页的信息就没有了
         PageInfo pageInfo = new PageInfo(orderList);
         pageInfo.setList(orderVoList);
@@ -543,7 +544,7 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     /**
-     * 后台查询订单，目前还是精确匹配，为了后期的模糊查询和多条件查询扩展，还是添加了分页
+     * 后台查询订单，目前还是精确匹配，和manageOrderDetail方法的区别是为了后期的模糊查询和多条件查询扩展，添加了分页
      * @param orderNo
      * @param pageNum
      * @param pageSize
@@ -552,11 +553,14 @@ public class OrderServiceImpl implements IOrderService {
     @Override
     public ServiceResponse<PageInfo> manageSearchOrder(Long orderNo, int pageNum, int pageSize) {
         PageHelper.startPage(pageNum,pageSize);
+
         Order order = orderMapper.selectByOrderNo(orderNo);
         List<OrderItem> orderItemList = orderItemMapper.selectByOrderNo(orderNo);
         OrderVo orderVo = this.assembleOrderVo(order,orderItemList);
+
         PageInfo pageInfo = new PageInfo(Lists.newArrayList(order));
         pageInfo.setList(Lists.newArrayList(orderVo));
+
         return ServiceResponse.createBySuccess(pageInfo);
     }
 

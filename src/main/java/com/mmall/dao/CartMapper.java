@@ -18,13 +18,15 @@ public interface CartMapper {
 
     int updateByPrimaryKey(Cart record);
 
+//    但传递多个参数时需要是用@Param注解为每一个参数起一个别名，因为java中方法中传入的参数是形参，
+//    java保存形参是以arg0,arg1这样的名字来保存，这样传给sql时就没办法进行对应的绑定，会报bindingException
     Cart selectByUserIdAndProductId(@Param("userId") Integer userId,@Param("productId") Integer productId);
 
     List<Cart> selectCartByUserId(Integer userId);
 
     int selectProductCheckedStatusByUserId(Integer userId);
 
-    int deleteByUserIdAndproductId(@Param("userId") Integer userId,@Param("productIdList") List<String> productIdList);
+    int deleteByUserIdAndProductId(@Param("userId") Integer userId,@Param("productIdList") List<String> productIdList);
 
     int checkedOrUncheckedProduct(@Param("userId") Integer userId,@Param("checked") Integer checked,@Param("productId") Integer productId);
 

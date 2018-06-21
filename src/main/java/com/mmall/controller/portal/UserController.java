@@ -46,6 +46,12 @@ public class UserController {
         return iUserService.register(user);
     }
 
+    /**
+     * 在用户进行注册输入用户名和邮箱时通过ajax实时的验证唯一性
+     * @param type
+     * @param value
+     * @return
+     */
     @RequestMapping(value = "check_valid.do",method = RequestMethod.POST)
     @ResponseBody
     public ServiceResponse<String> checkValid(String type,String value){

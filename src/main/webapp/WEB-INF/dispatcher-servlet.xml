@@ -10,9 +10,21 @@
        http://www.springframework.org/schema/mvc
        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
+    <!--进行包扫描,扫描web相关的bean-->
     <context:component-scan base-package="com.mmall" annotation-config="true"/>
 
+    <!--当在web.xml中将DispatcherServlet的ServletURL配置为“/”时，需要添加下面这个注解，用于访问静态资源，在SpringMVC将请求和Handler匹配的同时，
+       这个配置会开启将请求向默认的servlet进行转发，这样就能访问到静态资源-->
+    <!--
+         <mvc:default-servlet-handler/>
+    -->
+
+    <!--mvc:annotation-driven的作用：
+        （1）自动注册了DefaultAnnotationHandlerMapping,DefaultAnnotationHandlerAdaptor这两个SpringMVC的组件；
+        （2）提供一系列的功能支持：数据绑定，日期与数字的转换（@NumberFormat,@DateTimeFormat）,xml和json的默认读写支持
+    -->
     <mvc:annotation-driven>
+
         <mvc:message-converters>
             <bean class="org.springframework.http.converter.StringHttpMessageConverter">
                 <property name="supportedMediaTypes">

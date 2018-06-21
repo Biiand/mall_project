@@ -57,6 +57,11 @@
     and id = #{primaryKey}
   </delete>
 
+  
+  <!--useGeneratedKeys="true" keyProperty="id"属性的作用（仅对 insert 和 update 有用）：
+  使用 JDBC 的 getGeneratedKeys 方法来取出由数据库内部生成的主键，
+  唯一标记一个属性，MyBatis 会通过 getGeneratedKeys 的返回值或者通过 insert 语句的 selectKey 子元素设置它的键值
+  -->
   <insert id="insert" parameterType="com.mmall.pojo.Shipping" useGeneratedKeys="true" keyProperty="id">
     insert into mmall_shipping (id, user_id, receiver_name, 
       receiver_phone, receiver_mobile, receiver_province, 

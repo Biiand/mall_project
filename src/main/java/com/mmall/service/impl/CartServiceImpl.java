@@ -83,7 +83,7 @@ public class CartServiceImpl implements ICartService {
         }
 //        使用Guaua提供的工具类Splitter对字符串进行分割并转换为集合
         List<String> productIdList = Splitter.on(",").splitToList(productIds);
-        cartMapper.deleteByUserIdAndproductId(userId,productIdList);
+        cartMapper.deleteByUserIdAndProductId(userId,productIdList);
         return this.list(userId);
     }
 

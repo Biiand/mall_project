@@ -14,8 +14,8 @@
         </encoder>
         <!--ThresholdFilter，记录level不小于DEBUG级别的日志-->
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>DEBUG</level>
-        </filter>
+        <level>DEBUG</level>
+    </filter>
     </appender>
 
     <!--FileAppender：将日志记录到指定文件；

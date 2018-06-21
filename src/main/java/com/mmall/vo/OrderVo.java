@@ -8,8 +8,9 @@ import java.util.List;
  * Created by hasee on 2018/5/9.
  */
 public class OrderVo {
+//    1.订单号
     private Long orderNo;
-
+//    2.付款信息
     private BigDecimal payment;
 
     private Integer paymentType;
@@ -19,10 +20,11 @@ public class OrderVo {
     private Integer postage;
 
     private Integer status;
+
     private String statusDesc;
 
-
     private String paymentTime;
+//    3.订单进程的时间点
 //发货时间
     private String sendTime;
 
@@ -32,10 +34,11 @@ public class OrderVo {
 
     private String createTime;
 
-//    订单的明细
+//    4.订单的明细
     private List<OrderItemVo> orderItemVoList;
 //  图片的访问前缀
     private String imageHost;
+//    5.物流信息
 //  供前端选择调用
     private Integer shippingId;
     private String receiverName;

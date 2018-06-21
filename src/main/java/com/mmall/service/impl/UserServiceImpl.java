@@ -29,8 +29,8 @@ public class UserServiceImpl implements IUserService{
         if(resultCount == 0){
             return ServiceResponse.createByErrorMessage("用户名不存在");
         }
-//        使用todo关键字对预留的功能位置进行标注
-//        todo 密码登陆MD5
+//        使用todo关键字对预留的功能位置进行标注,从下方的TODO可以快速定位
+//        "t odo" 密码登陆MD5
 //      对密码进行MD5加密，使用加密后的密码与数据库进行比较,新建一个引用是为了与原来的引用进行区分，便于阅读
         String md5Password = MD5Util.MD5EncodeUtf8(password);
         User user = userMapper.selectLogin(username,md5Password);
@@ -39,6 +39,7 @@ public class UserServiceImpl implements IUserService{
         }
 
 //        用户登陆成功后将用户的User对象的密码置为空字符串（""），为什么要调用Utils方法，而不是直接传一个"" ?
+//        使用成熟的工具类能减少重复工作和提高程序的健壮性
         user.setPassword(StringUtils.EMPTY);
 
         return ServiceResponse.createBySuccess("登陆成功",user);
@@ -106,7 +107,7 @@ public class UserServiceImpl implements IUserService{
         }
 //        当用户答对问题后为用户生成唯一的token，在用户重置密码的时候校验该token，避免横向越权问题（具体看5-1 9分30秒部分）
         String userToken = UUID.randomUUID().toString();
-//        将userToken放入本地缓存
+//        将userToken放入本地缓存,注意key值是使用用户名进行拼接的，这样就保证了key值的唯一性
         TokenCache.setKey(TokenCache.TOKEN_PREFIX+username,userToken);
         return ServiceResponse.createBySuccess(userToken);
     }
@@ -162,7 +163,9 @@ public class UserServiceImpl implements IUserService{
         if(resultCount > 0){
             return ServiceResponse.createByErrorMessage("邮箱已存在,请使用其它邮箱");
         }
-//        new一个新的user对象存储想要更新的字段，避免直接传入初始user进行更新时重写所有字段，这又性能的考虑，也有业务复杂后数据安全的考虑
+//        new一个新的user对象存储想要更新的字段，避免直接传入初始user进行更新时重写所有字段，这有性能的考虑，
+//          也有业务复杂后数据安全的考虑，因为前端传来的数据组成的对象中可能被恶意的添加了数据，例如修改了user的
+//              权限，这样直接插入数据库就会造成纵向越权问题
         User updateUser = new User();
         updateUser.setId(user.getId());
         updateUser.setPhone(user.getPhone());
