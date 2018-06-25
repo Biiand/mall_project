@@ -9,7 +9,9 @@ import java.io.Serializable;
 /**
  * Created by hasee on 2018/4/24.
  */
-//该注解在进行json序列化时将值为null的变量排除出去
+//该注解标注了对ServiceResponse类使用配置的json序列化框架进行json序列化，
+// 配合Controller中Handler的@ResponseBody注解生效。
+// 在进行json序列化时将值为null的变量排除出去
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ServiceResponse<T> implements Serializable {
 

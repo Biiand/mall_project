@@ -24,7 +24,7 @@
         （2）提供一系列的功能支持：数据绑定，日期与数字的转换（@NumberFormat,@DateTimeFormat）,xml和json的默认读写支持
     -->
     <mvc:annotation-driven>
-
+        <!--message-converters标签内设置需要的MessageConverter,不注册的话就使用Spring默认的MessageConverter-->
         <mvc:message-converters>
             <bean class="org.springframework.http.converter.StringHttpMessageConverter">
                 <property name="supportedMediaTypes">
@@ -34,6 +34,7 @@
                     </list>
                 </property>
             </bean>
+            <!--这里使用Jackson作为Controller返回值的Json序列化的Converter,因为不是Spring默认的Converter,所以在pom中要引入Jackson的依赖-->
             <bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
                 <property name="supportedMediaTypes">
                     <list>
