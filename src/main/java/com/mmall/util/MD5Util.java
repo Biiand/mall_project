@@ -1,8 +1,10 @@
 package com.mmall.util;
 
-import org.springframework.util.StringUtils;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.security.MessageDigest;
+
 
 /**
  * Created by hasee
@@ -38,7 +40,7 @@ public class MD5Util {
         try {
             resultString = new String(origin);
             MessageDigest md = MessageDigest.getInstance("MD5");
-            if (charsetname == null || "".equals(charsetname))
+            if (StringUtils.isEmpty(charsetname))
                 resultString = byteArrayToHexString(md.digest(resultString.getBytes()));
             else
                 resultString = byteArrayToHexString(md.digest(resultString.getBytes(charsetname)));

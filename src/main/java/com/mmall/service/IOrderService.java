@@ -15,8 +15,19 @@ public interface IOrderService {
 
     ServiceResponse pay(Integer userId,Long orderNo,String path);
 
+    /**
+     * 校验支付宝回调的参数
+     * @param params
+     * @return
+     */
     ServiceResponse verifyParams(Map<String,String> params);
 
+    /**
+     * 查询订单支付状态
+     * @param userId
+     * @param orderNo
+     * @return
+     */
     ServiceResponse queryPayStatus(Integer userId,Long orderNo);
 
     ServiceResponse cancel(Integer userId,Long orderNo);
@@ -25,6 +36,13 @@ public interface IOrderService {
 
     ServiceResponse getOrderDetail(Integer userId,Long orderNo);
 
+    /**
+     * 获取用户的订单列表
+     * @param userId
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
     ServiceResponse<PageInfo> getOrderList(Integer userId,int pageNum,int pageSize);
 
 //    以下是后台管理员使用的方法

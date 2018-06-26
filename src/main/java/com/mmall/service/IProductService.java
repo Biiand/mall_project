@@ -5,6 +5,8 @@ import com.mmall.common.ServiceResponse;
 import com.mmall.pojo.Product;
 import com.mmall.vo.ProductDetailVo;
 
+import java.util.List;
+
 /**
  * Created by hasee on 2018/4/29.
  */
@@ -24,5 +26,5 @@ public interface IProductService {
 
     ServiceResponse<PageInfo> getProductByKeywordOrCategoryId(String keyword,Integer categoryId,Integer pageNum,Integer pageSize,String orderBy);
 
-
+    ServiceResponse<List<Product>> getProductsById(List<Integer> list);
 }

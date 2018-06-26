@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mmall.dao.SecKillProductMapper">
+
+    <resultMap id="BaseResultMap" type="com.mmall.pojo.SecKillProduct">
+        <constructor>
+            <idArg column="seckill_id" javaType="integer" jdbcType="INTEGER"/>
+            <arg column="product_id" javaType="integer" jdbcType="INTEGER"/>
+            <arg column="price" javaType="bigdecimal" jdbcType="DECIMAL"/>
+            <arg column="stock" javaType="integer" jdbcType="INTEGER"/>
+            <arg column="start_time" javaType="date" jdbcType="TIMESTAMP"/>
+            <arg column="end_time" javaType="date" jdbcType="TIMESTAMP"/>
+            <arg column="create_time" javaType="date" jdbcType="TIMESTAMP"/>
+            <arg column="update_time" javaType="date" jdbcType="TIMESTAMP"/>
+        </constructor>
+    </resultMap>
+    
+    <sql id="Base_Column_List">
+        seckill_id, product_id, price, stock, start_time, end_time, create_time, update_time
+    </sql>
+    
+    <insert id="insert" parameterType="com.mmall.pojo.SecKillProduct">
+        INSERT INTO mmall_secKill_product
+        (seckill_id, product_id, price, stock, start_time, end_time, create_time, update_time)
+        VALUES
+        (DEFAULT ,#{productId} ,#{price} ,#{stock} ,#{startTime} ,#{endTime} ,now() ,now() )
+    </insert>
+    
+    <update id="reduceStockById" parameterType="integer">
+        UPDATE mmall_secKill_product
+        SET stock = stock - 1
+        WHERE seckill_id = #{secKillId}
+        AND start_time <![CDATA[ <= ]]> #{currentTime}
+        AND end_time >= #{currentTime}
+        AND stock > 0
+    </update>
+    
+    <update id="updateByPrimaryKeySelective" parameterType="com.mmall.pojo.SecKillProduct">
+        UPDATE mmall_secKill_product
+        <set>
+            <if test="productId != null">
+              product_id = #{productId},
+            </if>
+            <if test="price != null">
+                price = #{price},
+            </if>
+            <if test="stock != null">
+                stock = #{stock},
+            </if>
+            <if test="startTime != null">
+              start_time = #{startTime},
+            </if>
+            <if test="endTime != null">
+              end_time = #{endTime},
+            </if>
+            update_time = now()
+        </set>
+        WHERE seckill_id = #{id}
+    </update>
+    
+    <select id="selectList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM mmall_secKill_product
+        WHERE end_time > now()
+        ORDER BY start_time ASC
+    </select>
+    
+    <select id="selectById" resultMap="BaseResultMap" parameterType="integer">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM mmall_secKill_product
+        WHERE seckill_id = #{secKillId}
+    </select>
+
+
+</mapper>

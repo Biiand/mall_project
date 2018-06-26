@@ -17,6 +17,7 @@ import com.google.common.collect.Lists;
 import com.mmall.common.Const;
 import com.mmall.common.ServiceResponse;
 import com.mmall.dao.*;
+import com.mmall.exception.SecKillException;
 import com.mmall.pojo.*;
 import com.mmall.service.IOrderService;
 import com.mmall.util.BigDecimalUtil;
@@ -33,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,13 +66,22 @@ public class OrderServiceImpl implements IOrderService {
     @Autowired
     private ShippingMapper shippingMapper;
 
+    @Autowired
+    SecKillProductMapper secKillProductMapper;
+
     private static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
 
+    /**
+     * 创建普通商品的订单
+     * @param userId
+     * @param shippingId
+     * @return
+     */
     @Override
     public ServiceResponse create(Integer userId, Integer shippingId) {
 //        将购物车勾选的商品取出来
         List<Cart> cartList = cartMapper.selectSelectedItemsByUserId(userId);
-//        计算总价
+//        获取商品明细
         ServiceResponse response = this.getOrderItems(userId,cartList);
         if(!response.isSuccess()){
             return response;
@@ -79,6 +90,7 @@ public class OrderServiceImpl implements IOrderService {
         if(CollectionUtils.isEmpty(orderItemList)){
             return ServiceResponse.createByErrorMessage("生成订单明细错误");
         }
+//        计算订单总价
         BigDecimal payment = this.getOrderTotalPrice(orderItemList);
 
 //        生成订单对象并存入数据库
@@ -104,7 +116,56 @@ public class OrderServiceImpl implements IOrderService {
         return ServiceResponse.createBySuccess(this.assembleOrderVo(order,orderItemList));
     }
 
-//  获取订单商品明细
+    /**
+     * 创建秒杀商品的订单
+     * @param userId
+     * @param SecKillId
+     * @param shippingId
+     * @return
+     */
+    @Transactional
+    public ServiceResponse createSecKillOrder(Integer userId,Integer SecKillId,Integer shippingId){
+        SecKillProduct secKillProduct = secKillProductMapper.selectById(SecKillId);
+        Product product = productMapper.selectByPrimaryKey(secKillProduct.getProductId());
+//        生成订单明细
+        OrderItem orderItem = new OrderItem();
+        orderItem.setUserId(userId);
+        orderItem.setProductId(product.getId());
+        orderItem.setProductName(product.getName());
+        orderItem.setCurrentUnitPrice(secKillProduct.getPrice());
+        orderItem.setProductImage(product.getMainImage());
+        orderItem.setQuantity(1);
+        orderItem.setTotalPrice(secKillProduct.getPrice());
+//         订单总价
+        BigDecimal payment = secKillProduct.getPrice();
+
+//        生成订单对象并存入数据库
+        Order order = this.assembleOrder(userId,shippingId,payment);
+        if(order == null){
+            return ServiceResponse.createByErrorMessage("生成订单错误");
+        }
+
+        orderItem.setOrderNo(order.getOrderNo());
+//        保存订单明细
+        orderItemMapper.insert(orderItem);
+
+        int resultCount = secKillProductMapper.reduceStockById(SecKillId,new Date());
+        if(resultCount <= 0){
+//            抛出运行时异常，回滚数据
+            throw new SecKillException("秒杀失败");
+        }
+        List<OrderItem> orderItemList = new ArrayList<>();
+        orderItemList.add(orderItem);
+
+        return ServiceResponse.createBySuccess(this.assembleOrderVo(order,orderItemList));
+    }
+
+    /**
+     * 获取订单商品明细
+     * @param userId
+     * @param cartList
+     * @return
+     */
     private ServiceResponse getOrderItems(Integer userId, List<Cart> cartList){
         if(CollectionUtils.isEmpty(cartList)){
             return ServiceResponse.createByErrorMessage("未选中任何购物车中的商品");

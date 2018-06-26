@@ -227,6 +227,12 @@ public class ProductServiceImpl implements IProductService {
         return ServiceResponse.createBySuccess(pageInfo);
     }
 
+    @Override
+    public ServiceResponse<List<Product>> getProductsById(List<Integer> list) {
+        List<Product> productList = productMapper.selectById(list);
+        return ServiceResponse.createBySuccess(productList);
+    }
+
 
     private ProductListVo assembleProductListVo(Product product) {
         ProductListVo productListVo = new ProductListVo();

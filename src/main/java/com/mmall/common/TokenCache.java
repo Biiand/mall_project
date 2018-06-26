@@ -11,11 +11,14 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Created by hasee on 2018/4/26.
+ * 使用GuavaCache实现本地缓存
  */
 public class TokenCache {
 
 //    为存入缓存的数据的Key设定前缀
     public static final String TOKEN_PREFIX = "token_";
+
+    public static final String SECKILL_TOKEN_PREFIX = "secKIllID_";
 
 //    使用logBack提供的Logger，org.slf4j.Logger
     private static Logger logger = LoggerFactory.getLogger(TokenCache.class);

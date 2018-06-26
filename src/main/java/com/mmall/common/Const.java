@@ -46,6 +46,16 @@ public class Const {
         String LIMIT_NUM_FAIL = "LIMIT_NUM_FAIL";
     }
 
+    /**
+     * 针对支付宝回调给支付宝的反馈
+     */
+    public interface AlipayCallback{
+        String TRADE_STATUS_WAIT_BUYER_PAY = "WAIT_BUYER_PAY";
+        String TRADE_STATUS_TRADE_SUCCESS = "TRADE_SUCCESS";
+        String RESPONSE_SUCCESS = "success";
+        String RESPONSE_FAILED = "failed";
+    }
+
 //    商品在售状态枚举
     public enum ProductStatusEnum{
         ON_SALE(1,"在售"),
@@ -121,14 +131,6 @@ public class Const {
     }
 
 
-
-    public interface AlipayCallback{
-        String TRADE_STATUS_WAIT_BUYER_PAY = "WAIT_BUYER_PAY";
-        String TRADE_STATUS_TRADE_SUCCESS = "TRADE_SUCCESS";
-        String RESPONSE_SUCCESS = "success";
-        String RESPONSE_FAILED = "failed";
-    }
-
     public enum PaymentTypeEnum{
         ONLINE_PAY(1,"在线支付"),
         CASH_ON_DILIVERY(2,"货到付款")
@@ -168,8 +170,6 @@ public class Const {
             throw new RuntimeException("没有该code对应的枚举");
         }
     }
-
-
 
     public enum PayPlatformEnum{
         ALIPAY(1,"支付宝"),
