@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.mmall.common.ServiceResponse;
 import com.mmall.common.TokenCache;
 import com.mmall.dao.ProductMapper;
+import com.mmall.dao.RedisDao;
 import com.mmall.dao.SecKillDetailMapper;
 import com.mmall.dao.SecKillProductMapper;
 import com.mmall.dto.Exposer;
@@ -37,6 +38,9 @@ public class SecKillServiceImpl implements ISecKIllService {
     @Autowired
     ProductMapper productMapper;
 
+    @Autowired
+    RedisDao redisDao;
+
     @Override
     public ServiceResponse<PageInfo> getSecKillList(Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
@@ -57,6 +61,8 @@ public class SecKillServiceImpl implements ISecKIllService {
 
     /**
      * 执行秒杀操作需要获取md5Token，防止用户提前秒杀
+     * 针对秒杀商品时增加的大量的商品查询操作，使用Redis进行缓存，减少数据库访问量
+     * 使用最简单的基于超时的数据一致性维护
      *
      * @param secKillId
      * @param userId
@@ -64,12 +70,17 @@ public class SecKillServiceImpl implements ISecKIllService {
      */
     @Override
     public ServiceResponse<Exposer> getExposer(Integer secKillId, Integer userId) {
-        SecKillProduct product = secKillProductMapper.selectById(secKillId);
-        if (product == null) {
-            return ServiceResponse.createBySuccess(new Exposer(false, secKillId));
+        SecKillProduct secKillProduct = redisDao.get(secKillId);
+        if(secKillProduct == null){
+            secKillProduct = secKillProductMapper.selectById(secKillId);
+            if (secKillProduct == null) {
+                return ServiceResponse.createBySuccess(new Exposer(false, secKillId));
+            }
+            redisDao.set(secKillProduct);
         }
-        long startTime = product.getStartTime().getTime();
-        long endTime = product.getEndTime().getTime();
+
+        long startTime = secKillProduct.getStartTime().getTime();
+        long endTime = secKillProduct.getEndTime().getTime();
         long currentTime = new Date().getTime();
         if (currentTime < startTime || currentTime > endTime) {
             return ServiceResponse.createBySuccess(new Exposer(false, secKillId, currentTime, startTime, endTime));
