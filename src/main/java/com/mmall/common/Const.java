@@ -14,6 +14,9 @@ public class Const {
 
     public static final String EMAIL = "email";
 
+    public interface redisCacheExTime{
+        int SESSION_EXPIRE_TIME = 60 * 30; //设置登陆session过期时间30分钟
+    }
 
     /**
      * 用户和管理员是一个角色组，因为只有两种角色，专门使用一个枚举类的话显得过于繁重，

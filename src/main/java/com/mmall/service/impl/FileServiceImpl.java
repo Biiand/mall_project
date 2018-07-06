@@ -3,8 +3,7 @@ package com.mmall.service.impl;
 import com.google.common.collect.Lists;
 import com.mmall.service.IFileService;
 import com.mmall.util.FTPUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,21 +15,22 @@ import java.util.UUID;
  * Created by hasee on 2018/5/1.
  */
 @Service("iFileService")
+@Slf4j
 public class FileServiceImpl implements IFileService {
 
-    private static final Logger logger = LoggerFactory.getLogger(FileServiceImpl.class);
+//    private static final Logger log = LoggerFactory.getLogger(FileServiceImpl.class);
 
     @Override
     public String uploadImages(MultipartFile file, String path) {
         String originalFileName = file.getOriginalFilename();
 
-        logger.info("file是否为空:{}",file.isEmpty());
+        log.info("file是否为空:{}",file.isEmpty());
 
         String fileExtensionName = originalFileName.substring(originalFileName.lastIndexOf(".")+1);
 //        为上传的文件重新设一个唯一的文件名，解决上传的文件重名的问题
         String uploadFileName = UUID.randomUUID().toString()+"."+fileExtensionName;
 
-        logger.info("开始上传文件，原始文件名：{}，接收路径：{}，上传文件名：{}",originalFileName,path,uploadFileName);
+        log.info("开始上传文件，原始文件名：{}，接收路径：{}，上传文件名：{}",originalFileName,path,uploadFileName);
 
         File fileDir = new File(path);
 //        如果path下的文件夹不存在，则先创建该文件夹并设为可写
@@ -58,7 +58,7 @@ public class FileServiceImpl implements IFileService {
             }
             return null;
         } catch (IOException e) {
-            logger.error("上传文件异常",e);
+            log.error("上传文件异常",e);
             return null;
         }
     }

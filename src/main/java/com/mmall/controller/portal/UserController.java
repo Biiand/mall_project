@@ -5,6 +5,8 @@ import com.mmall.common.ResponseCode;
 import com.mmall.common.ServiceResponse;
 import com.mmall.pojo.User;
 import com.mmall.service.IUserService;
+import com.mmall.util.JsonUtil;
+import com.mmall.util.RedisPoolUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,10 +30,14 @@ public class UserController {
     public ServiceResponse<User> login(String username, String password, HttpSession session) {
         ServiceResponse<User> response = iUserService.login(username,password);
         if(response.isSuccess()){
-            session.setAttribute(Const.CURRENT_USER,response.getData());
+//            session.setAttribute(Const.CURRENT_USER,response.getData());
+//            240C06176B20A4030F956A1920858F61
+            RedisPoolUtil.setEx(session.getId(), JsonUtil.obj2String(response.getData()), Const.redisCacheExTime.SESSION_EXPIRE_TIME);
+
         }
         return response;
     }
+
 
     @RequestMapping(value = "logout.do",method = RequestMethod.POST)
     @ResponseBody

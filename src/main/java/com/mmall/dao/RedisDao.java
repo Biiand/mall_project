@@ -4,14 +4,14 @@ import com.dyuproject.protostuff.LinkedBuffer;
 import com.dyuproject.protostuff.ProtostuffIOUtil;
 import com.dyuproject.protostuff.runtime.RuntimeSchema;
 import com.mmall.pojo.SecKillProduct;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
+@Slf4j
 public class RedisDao {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RedisDao.class);
+//    private static final Logger log = LoggerFactory.getLogger(RedisDao.class);
 
     private static final String KEY_PRIFEX = "secKill:";
 
@@ -44,7 +44,7 @@ public class RedisDao {
                 return product;
             }
         } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
         return null;
     }
@@ -57,7 +57,7 @@ public class RedisDao {
             String result = jedis.setex(key.getBytes(), timeout, bytes);
             return result;
         } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
         return null;
     }

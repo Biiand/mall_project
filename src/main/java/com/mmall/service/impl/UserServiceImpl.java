@@ -47,7 +47,7 @@ public class UserServiceImpl implements IUserService{
 
 
     @Override
-    public ServiceResponse<String> register(User user) {
+    public ServiceResponse register(User user) {
 //          校验用户名和邮箱
         ServiceResponse validResponse = this.checkValid(Const.USERNAME,user.getUsername());
         if(!validResponse.isSuccess()) return validResponse;
@@ -66,7 +66,7 @@ public class UserServiceImpl implements IUserService{
     }
 
     @Override
-    public ServiceResponse<String> checkValid(String type, String value) {
+    public ServiceResponse checkValid(String type, String value) {
         if(StringUtils.isNotBlank(type)){
             if(Const.USERNAME.equals(type)){
                 int resultCount = userMapper.checkUsername(value);
@@ -198,7 +198,7 @@ public class UserServiceImpl implements IUserService{
 
     @Override
     public ServiceResponse checkAdminRole(User user) {
-       if(user != null && user.getRole().intValue() == Const.Role.ROLE_ADMIN){
+       if(user != null && user.getRole() == Const.Role.ROLE_ADMIN){
             return ServiceResponse.createBySuccess();
        }
         return ServiceResponse.createByErrorMessage("无操作权限");

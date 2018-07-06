@@ -7,7 +7,8 @@ import java.math.BigDecimal;
  * 因此必须使用BigDecimal(String str)这个构造器来构建BigDecimal对象进行计算
  * Created by hasee on 2018/5/2.
  */
-public class BigDecimalUtil {
+public class
+BigDecimalUtil {
 
 //    使该工具类便不能在外部被实例化
     private BigDecimalUtil(){}

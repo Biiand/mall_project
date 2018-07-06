@@ -12,7 +12,7 @@ import java.util.Date;
  */
 public class DateTimeUtil {
 
-    private static final String STANDARD_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    public static final String STANDARD_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
 //    使用的Date和DateTime类型是joda下的
     public static Date strToDate(String dateTimeStr,String formatStr){

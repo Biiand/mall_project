@@ -1,8 +1,7 @@
 package com.mmall.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTPClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,9 +11,11 @@ import java.util.List;
 /**
  * Created by hasee on 2018/5/1.
  */
+
+@Slf4j
 public class FTPUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(FTPUtil.class);
+//    private static final Logger log = LoggerFactory.getLogger(FTPUtil.class);
 
     private static String ftpIp = PropertiesUtil.getProperty("ftp.server.ip");
     private static String ftpUser = PropertiesUtil.getProperty("ftp.user");
@@ -36,11 +37,11 @@ public class FTPUtil {
     public static boolean uploadFile(List<File> fileList) throws IOException {
 //        FTP配置文件中配置了端口号为21
         FTPUtil ftpUtil = new FTPUtil(ftpIp,21,ftpUser,ftpPass);
-        logger.info("开始连接FTP服务器上传文件");
+        log.info("开始连接FTP服务器上传文件");
 
         boolean isSuccess = ftpUtil.uploadFile("img",fileList);
 
-        logger.info("结束上传，上传结果：{}",isSuccess);
+        log.info("结束上传，上传结果：{}",isSuccess);
         return isSuccess;
     }
 
@@ -51,7 +52,7 @@ public class FTPUtil {
             client.connect(ip);
             isSuccess = client.login(user,password);
         } catch (IOException e) {
-            logger.error("连接FTP服务器异常",e);
+            log.error("连接FTP服务器异常",e);
         }
         return isSuccess;
     }
@@ -75,7 +76,7 @@ public class FTPUtil {
                 }
                 isSuccess = true;
             } catch (IOException e) {
-                logger.error("上传文件到FTP服务器异常",e);
+                log.error("上传文件到FTP服务器异常",e);
             }finally {
 //                这里产生的IOException向外抛不做处理是因为将异常抛到业务层会进行进一步的处理，
 //                不是所有的异常都要在最开始就处理掉，可以合理利用异常

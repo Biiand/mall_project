@@ -3,8 +3,7 @@ package com.mmall.common;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -13,6 +12,7 @@ import java.util.concurrent.TimeUnit;
  * Created by hasee on 2018/4/26.
  * 使用GuavaCache实现本地缓存
  */
+@Slf4j
 public class TokenCache {
 
 //    为存入缓存的数据的Key设定前缀
@@ -21,7 +21,7 @@ public class TokenCache {
     public static final String SECKILL_TOKEN_PREFIX = "secKIllID_";
 
 //    使用logBack提供的Logger，org.slf4j.Logger
-    private static Logger logger = LoggerFactory.getLogger(TokenCache.class);
+//    private static Logger log = LoggerFactory.getLogger(TokenCache.class);
 
     /**
      * 使用本地缓存的原因：在系统中，有些数据，数据量小，但是访问十分频繁，针对这种场景，需要将数据搞到应用的本地缓存中，以提升系统的访问效率，
@@ -57,7 +57,7 @@ public class TokenCache {
                 return null;
             }
         } catch (ExecutionException e) {
-            logger.error("localCache getValue error",e);
+            log.error("localCache getValue error",e);
             e.printStackTrace();
         }
         return value;

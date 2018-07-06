@@ -2,7 +2,7 @@
          pageEncoding="utf-8"%>
 <html>
 <body>
-<h2>Hello World!</h2>
+<h2><strong>Tomcat 01</strong></h2>
 
 <h3>SpringMVC文件上传</h3>
 <form name="fileForm1" method="post" action="/manage/product/upload.do" enctype="multipart/form-data">

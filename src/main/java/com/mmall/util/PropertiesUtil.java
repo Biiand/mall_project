@@ -1,8 +1,7 @@
 package com.mmall.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,9 +10,12 @@ import java.util.Properties;
 /**
  * Created by hasee
  */
+
+@Slf4j
 public class PropertiesUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(PropertiesUtil.class);
+//    使用lombok的@Slf4j注解在解析.java时添加logger对象，默认的引用名是log
+//    private static final Logger log = LoggerFactory.getLogger(PropertiesUtil.class);
 
     private static Properties props;
 
@@ -30,7 +32,7 @@ public class PropertiesUtil {
         try {
             props.load(new InputStreamReader(PropertiesUtil.class.getClassLoader().getResourceAsStream(fileName),"UTF-8"));
         } catch (IOException e) {
-            logger.error("加载mmall.properties文件出错",e);
+            log.error("加载mmall.properties文件出错",e);
         }
     }
 

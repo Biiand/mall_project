@@ -9,9 +9,7 @@ import com.mmall.common.ResponseCode;
 import com.mmall.common.ServiceResponse;
 import com.mmall.pojo.User;
 import com.mmall.service.IOrderService;
-import org.apache.ibatis.annotations.Param;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,12 +27,13 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping("/order/")
+@Slf4j
 public class OrderController {
 
     @Autowired
     private IOrderService iOrderService;
 
-    private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
+//    private static final Logger log = LoggerFactory.getLogger(OrderController.class);
 
     @RequestMapping("create.do")
     @ResponseBody
@@ -122,7 +121,7 @@ public class OrderController {
             }
             params.put(key,valueStr);
         }
-        logger.info("支付宝回调参数：sign:{},trade_status:{},参数:{}",params.get("sign"),params.get("trade_status"),params.toString());
+        log.info("支付宝回调参数：sign:{},trade_status:{},参数:{}",params.get("sign"),params.get("trade_status"),params.toString());
 
 //        非常重要，验证支付宝回调的正确性，确保回调是来自支付宝，还要避免重复通知
 //        1.验证支付宝的签名
@@ -132,11 +131,11 @@ public class OrderController {
 //            调用支付宝的验签方法
             boolean alipaySignCheck = AlipaySignature.rsaCheckV2(params, Configs.getAlipayPublicKey(),"utf-8",Configs.getSignType());
             if(!alipaySignCheck){
-                logger.info("验签未通过：",!alipaySignCheck);
+                log.info("验签未通过：",!alipaySignCheck);
                 return ServiceResponse.createByErrorMessage("验签未通过");
             }
         } catch (AlipayApiException e) {
-            logger.error("支付宝回调验签异常",e);
+            log.error("支付宝回调验签异常",e);
         }
 
 //        验签通过后校验返回的数据的状态，做处理后按文档要求给支付宝返回success或其它字符串作为响应

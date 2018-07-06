@@ -1,6 +1,5 @@
 package com.mmall.common;
 
-import com.sun.javaws.Main;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 

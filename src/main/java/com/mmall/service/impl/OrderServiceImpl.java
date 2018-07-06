@@ -10,7 +10,6 @@ import com.alipay.demo.trade.model.result.AlipayF2FPrecreateResult;
 import com.alipay.demo.trade.service.AlipayTradeService;
 import com.alipay.demo.trade.service.impl.AlipayTradeServiceImpl;
 import com.alipay.demo.trade.utils.ZxingUtils;
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
@@ -28,10 +27,9 @@ import com.mmall.vo.OrderItemVo;
 import com.mmall.vo.OrderProductVo;
 import com.mmall.vo.OrderVo;
 import com.mmall.vo.ShippingVo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +44,7 @@ import java.util.concurrent.ExecutionException;
  * Created by hasee on 2018/5/7.
  */
 @Service("iOrderService")
+@Slf4j
 public class OrderServiceImpl implements IOrderService {
 
     @Autowired
@@ -69,7 +68,7 @@ public class OrderServiceImpl implements IOrderService {
     @Autowired
     SecKillProductMapper secKillProductMapper;
 
-    private static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
+//    private static final Logger log = LoggerFactory.getLogger(OrderServiceImpl.class);
 
     /**
      * 创建普通商品的订单
@@ -400,7 +399,7 @@ public class OrderServiceImpl implements IOrderService {
         AlipayF2FPrecreateResult result = tradeService.tradePrecreate(builder);
         switch (result.getTradeStatus()) {
             case SUCCESS:
-                logger.info("支付宝预下单成功: )");
+                log.info("支付宝预下单成功: )");
 
 //                获取支付宝预下单的返回结果response
                 AlipayTradePrecreateResponse response = result.getResponse();
@@ -414,7 +413,7 @@ public class OrderServiceImpl implements IOrderService {
                 }
 //              组装二维码图片的存储路径，%s是占位符，代表response.getOutTradeNo()的值，这里就是订单号
                 String qrPath = String.format(path+"/qr-%s.png",response.getOutTradeNo());
-                logger.info("qrPath",qrPath);
+                log.info("qrPath",qrPath);
 
 //              使用二维码生成工具将qrCode转化为图片并存放进qrPath指定的路径下
                 ZxingUtils.getQRCodeImge(response.getQrCode(), 256, qrPath);
@@ -424,7 +423,7 @@ public class OrderServiceImpl implements IOrderService {
                 try {
                     FTPUtil.uploadFile(Lists.newArrayList(targetFile));
                 } catch (IOException e) {
-                    logger.error("上传二维码图片到FTP服务器异常",e);
+                    log.error("上传二维码图片到FTP服务器异常",e);
                 }
 
 //                组装二维码图片的url
@@ -434,15 +433,15 @@ public class OrderServiceImpl implements IOrderService {
                 return ServiceResponse.createBySuccess(resultMap);
 
             case FAILED:
-                logger.error("支付宝预下单失败!!!");
+                log.error("支付宝预下单失败!!!");
                 return ServiceResponse.createByErrorMessage("支付宝预下单失败!!!");
 
             case UNKNOWN:
-                logger.error("系统异常，预下单状态未知!!!");
+                log.error("系统异常，预下单状态未知!!!");
                 return ServiceResponse.createByErrorMessage("系统异常，预下单状态未知!!!");
 
             default:
-                logger.error("不支持的交易状态，交易返回异常!!!");
+                log.error("不支持的交易状态，交易返回异常!!!");
                 return ServiceResponse.createByErrorMessage("不支持的交易状态，交易返回异常!!!");
         }
     }
@@ -501,12 +500,12 @@ public class OrderServiceImpl implements IOrderService {
     //    支付宝打印响应的方法
     private void dumpResponse(AlipayResponse response) {
         if (response != null) {
-            logger.info(String.format("code:%s, msg:%s", response.getCode(), response.getMsg()));
+            log.info(String.format("code:%s, msg:%s", response.getCode(), response.getMsg()));
             if (StringUtils.isNotEmpty(response.getSubCode())) {
-                logger.info(String.format("subCode:%s, subMsg:%s", response.getSubCode(),
+                log.info(String.format("subCode:%s, subMsg:%s", response.getSubCode(),
                         response.getSubMsg()));
             }
-            logger.info("body:" + response.getBody());
+            log.info("body:" + response.getBody());
         }
     }
 
