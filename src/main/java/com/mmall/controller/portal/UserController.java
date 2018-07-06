@@ -5,14 +5,18 @@ import com.mmall.common.ResponseCode;
 import com.mmall.common.ServiceResponse;
 import com.mmall.pojo.User;
 import com.mmall.service.IUserService;
+import com.mmall.util.CookieUtil;
 import com.mmall.util.JsonUtil;
 import com.mmall.util.RedisPoolUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -27,22 +31,29 @@ public class UserController {
 
     @RequestMapping(value = "login.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServiceResponse<User> login(String username, String password, HttpSession session) {
+    public ServiceResponse<User> login(String username, String password, HttpSession session, HttpServletResponse httpServletResponse) {
         ServiceResponse<User> response = iUserService.login(username,password);
         if(response.isSuccess()){
-//            session.setAttribute(Const.CURRENT_USER,response.getData());
-//            240C06176B20A4030F956A1920858F61
+            CookieUtil.writeLoginToken(httpServletResponse,session.getId());
             RedisPoolUtil.setEx(session.getId(), JsonUtil.obj2String(response.getData()), Const.redisCacheExTime.SESSION_EXPIRE_TIME);
-
         }
         return response;
     }
 
-
+    /**
+     * 退出登陆，如果获取的loginToken为空，则表示未登录，同样提示退出成功
+     * @param request
+     * @param response
+     * @return
+     */
     @RequestMapping(value = "logout.do",method = RequestMethod.POST)
     @ResponseBody
-    public ServiceResponse<String> logout(HttpSession session){
-        session.removeAttribute(Const.CURRENT_USER);
+    public ServiceResponse<String> logout(HttpServletRequest request,HttpServletResponse response){
+        String loginToken = CookieUtil.readLoginToken(request);
+        if (StringUtils.isNotBlank(loginToken)) {
+            RedisPoolUtil.delete(loginToken);
+            CookieUtil.deleteLoginToken(request,response);
+        }
         return ServiceResponse.createBySuccessMessage("成功退出登陆");
     }
 
@@ -66,10 +77,14 @@ public class UserController {
 
     @RequestMapping(value = "get_user_info.do",method = RequestMethod.POST)
     @ResponseBody
-    public ServiceResponse<User> getUserInfo(HttpSession session){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if(user != null){
-            return ServiceResponse.createBySuccess(user);
+    public ServiceResponse<User> getUserInfo(HttpServletRequest request){
+        String loginToken = CookieUtil.readLoginToken(request);
+        if (StringUtils.isNotBlank(loginToken)) {
+            String jsonStr = RedisPoolUtil.get(loginToken);
+            User user = JsonUtil.string2Obj(jsonStr, User.class);
+            if(user != null){
+                return ServiceResponse.createBySuccess(user);
+            }
         }
         return ServiceResponse.createByErrorMessage("用户当前未登录，无法获取详细信息");
     }
