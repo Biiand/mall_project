@@ -1,10 +1,13 @@
 package com.mmall.controller.portal;
 
-import com.mmall.common.Const;
 import com.mmall.common.ResponseCode;
 import com.mmall.common.ServiceResponse;
 import com.mmall.pojo.User;
 import com.mmall.service.ISecKIllService;
+import com.mmall.util.CookieUtil;
+import com.mmall.util.JsonUtil;
+import com.mmall.util.RedisShardedPoolUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/secKill/")
@@ -36,14 +39,19 @@ public class SecKillController {
 
     /**
      * 获取秒杀的暴露地址
-     * @param session
+     * @param request
      * @param secKillId
      * @return
      */
     @RequestMapping(value = "exposer.do", method = RequestMethod.GET)
     @ResponseBody
-    public ServiceResponse getExposer(HttpSession session, Integer secKillId) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServiceResponse getExposer(HttpServletRequest request, Integer secKillId) {
+        String loginToken = CookieUtil.readLoginToken(request);
+        if (StringUtils.isBlank(loginToken)) {
+            return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
+        }
+        String jsonStr = RedisShardedPoolUtil.get(loginToken);
+        User user = JsonUtil.string2Obj(jsonStr, User.class);
         if (user == null) {
             return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -52,15 +60,20 @@ public class SecKillController {
 
     /**
      * 执行秒杀，验证秒杀条件
-     * @param session
+     * @param request
      * @param secKillId
      * @param MD5Token
      * @return
      */
     @RequestMapping(value = "execution.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServiceResponse execution(HttpSession session, Integer secKillId, String MD5Token) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServiceResponse execution(HttpServletRequest request, Integer secKillId, String MD5Token) {
+        String loginToken = CookieUtil.readLoginToken(request);
+        if (StringUtils.isBlank(loginToken)) {
+            return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
+        }
+        String jsonStr = RedisShardedPoolUtil.get(loginToken);
+        User user = JsonUtil.string2Obj(jsonStr, User.class);
         if (user == null) {
             return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }

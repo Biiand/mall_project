@@ -14,6 +14,8 @@ public class Const {
 
     public static final String EMAIL = "email";
 
+    public static final String TOKEN_PREFIX = "token_";
+
     public interface redisCacheExTime{
         int SESSION_EXPIRE_TIME = 60 * 30; //设置登陆session过期时间30分钟
     }

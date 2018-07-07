@@ -1,13 +1,16 @@
 package com.mmall.controller.backend;
 
-import com.mmall.common.Const;
+import com.mmall.common.ResponseCode;
 import com.mmall.common.ServiceResponse;
 import com.mmall.pojo.Product;
 import com.mmall.pojo.User;
 import com.mmall.service.IFileService;
 import com.mmall.service.IProductService;
 import com.mmall.service.IUserService;
+import com.mmall.util.CookieUtil;
+import com.mmall.util.JsonUtil;
 import com.mmall.util.PropertiesUtil;
+import com.mmall.util.RedisShardedPoolUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,8 +43,13 @@ public class ProductManageController {
 
     @RequestMapping(value = "save_product.do",method = RequestMethod.POST)
     @ResponseBody
-    public ServiceResponse productSave(HttpSession session, Product product){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServiceResponse productSave(HttpServletRequest request, Product product){
+        String loginToken = CookieUtil.readLoginToken(request);
+        if (StringUtils.isBlank(loginToken)) {
+            return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
+        }
+        String jsonStr = RedisShardedPoolUtil.get(loginToken);
+        User user = JsonUtil.string2Obj(jsonStr, User.class);
         ServiceResponse response = iUserService.checkAdminBeforeOperate(user);
         if(response.isSuccess()){
             return iProductService.saveOrUpdateProduct(product);
@@ -52,15 +59,20 @@ public class ProductManageController {
 
     /**
      * 更改商品状态，status在数据库中的取值范围为（1,2,3），由前端进行限定
-     * @param session
+     * @param request
      * @param productId
      * @param status
      * @return
      */
     @RequestMapping(value = "set_sale_status.do",method = RequestMethod.POST)
     @ResponseBody
-    public ServiceResponse setSaleStatus(HttpSession session, Integer productId,Integer status){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServiceResponse setSaleStatus(HttpServletRequest request, Integer productId,Integer status){
+        String loginToken = CookieUtil.readLoginToken(request);
+        if (StringUtils.isBlank(loginToken)) {
+            return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
+        }
+        String jsonStr = RedisShardedPoolUtil.get(loginToken);
+        User user = JsonUtil.string2Obj(jsonStr, User.class);
         ServiceResponse response = iUserService.checkAdminBeforeOperate(user);
         if(response.isSuccess()){
             return iProductService.setSaleStatus(productId,status);
@@ -70,8 +82,13 @@ public class ProductManageController {
 
     @RequestMapping(value = "detail.do",method = RequestMethod.POST)
     @ResponseBody
-    public ServiceResponse getProductDetail(HttpSession session, Integer productId){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServiceResponse getProductDetail(HttpServletRequest request, Integer productId){
+        String loginToken = CookieUtil.readLoginToken(request);
+        if (StringUtils.isBlank(loginToken)) {
+            return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
+        }
+        String jsonStr = RedisShardedPoolUtil.get(loginToken);
+        User user = JsonUtil.string2Obj(jsonStr, User.class);
         ServiceResponse response = iUserService.checkAdminBeforeOperate(user);
         if(response.isSuccess()){
             return iProductService.manageProductDetail(productId);
@@ -81,10 +98,15 @@ public class ProductManageController {
 
     @RequestMapping(value = "get_list.do",method = RequestMethod.POST)
     @ResponseBody
-    public ServiceResponse getProductList(HttpSession session,
+    public ServiceResponse getProductList(HttpServletRequest request,
                                           @RequestParam(value = "pageNum",defaultValue = "1") Integer pageNum,
                                           @RequestParam(value = "pageSize",defaultValue = "10") Integer pageSize){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        String loginToken = CookieUtil.readLoginToken(request);
+        if (StringUtils.isBlank(loginToken)) {
+            return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
+        }
+        String jsonStr = RedisShardedPoolUtil.get(loginToken);
+        User user = JsonUtil.string2Obj(jsonStr, User.class);
         ServiceResponse response = iUserService.checkAdminBeforeOperate(user);
         if(response.isSuccess()){
             return iProductService.getProductList(pageNum,pageSize);
@@ -94,10 +116,15 @@ public class ProductManageController {
 
     @RequestMapping(value = "search.do",method = RequestMethod.POST)
     @ResponseBody
-    public ServiceResponse searchProduct(HttpSession session,String productName,Integer productId,
+    public ServiceResponse searchProduct(HttpServletRequest request,String productName,Integer productId,
                                          @RequestParam(value = "pageNum",defaultValue = "1") Integer pageNum,
                                          @RequestParam(value = "pageSize",defaultValue = "10") Integer pageSize){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        String loginToken = CookieUtil.readLoginToken(request);
+        if (StringUtils.isBlank(loginToken)) {
+            return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
+        }
+        String jsonStr = RedisShardedPoolUtil.get(loginToken);
+        User user = JsonUtil.string2Obj(jsonStr, User.class);
         ServiceResponse response = iUserService.checkAdminBeforeOperate(user);
         if(response.isSuccess()){
             return iProductService.searchProduct(productName,productId,pageNum,pageSize);
@@ -107,10 +134,14 @@ public class ProductManageController {
 
     @RequestMapping(value = "upload.do",method = RequestMethod.POST)
     @ResponseBody
-    public ServiceResponse uploadImages(HttpSession session,
-                                        @RequestParam(value = "upload_file",required = false) MultipartFile file, HttpServletRequest request){
+    public ServiceResponse uploadImages(@RequestParam(value = "upload_file",required = false) MultipartFile file, HttpServletRequest request){
 //       进行任何操作前对账户进行权限校验是为了避免遭到恶意攻击
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        String loginToken = CookieUtil.readLoginToken(request);
+        if (StringUtils.isBlank(loginToken)) {
+            return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
+        }
+        String jsonStr = RedisShardedPoolUtil.get(loginToken);
+        User user = JsonUtil.string2Obj(jsonStr, User.class);
         ServiceResponse response = iUserService.checkAdminBeforeOperate(user);
         if(response.isSuccess()){
             /**
@@ -140,15 +171,30 @@ public class ProductManageController {
         return response;
     }
 
+    /**
+     * 富文本上传，项目前端使用了simditor插件处理富文本上传，所以返回值需要按照该插件要求的格式进行处理
+     * 因为就只是该方法中需要按此格式返回，所以就不新建类了，直接使用一个map进行存储
+     * @param request
+     * @param response
+     * @param file
+     * @return
+     */
     @RequestMapping(value = "rich_text_img_upload.do",method = RequestMethod.POST)
     @ResponseBody
-    public Map richTextImgUpload(HttpSession session,HttpServletRequest request,HttpServletResponse response,
+    public Map richTextImgUpload(HttpServletRequest request,HttpServletResponse response,
                                         @RequestParam(value = "upload_file",required = false) MultipartFile file){
-//       进行任何操作前对账户进行权限校验是为了避免遭到恶意攻击
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-//        项目前端使用了simditor插件处理富文本上传，所以返回值需要按照该插件要求的格式进行处理
-//        因为就只是该方法中需要按此格式返回，所以就不新建类了，直接使用一个map进行存储
         Map resultMap = new HashMap<>();
+
+//       进行任何操作前对账户进行权限校验是为了避免遭到恶意攻击
+        String loginToken = CookieUtil.readLoginToken(request);
+        if (StringUtils.isBlank(loginToken)) {
+            resultMap.put("success",false);
+            resultMap.put("msg","未登录，需要登陆");
+            return resultMap;
+        }
+        String jsonStr = RedisShardedPoolUtil.get(loginToken);
+        User user = JsonUtil.string2Obj(jsonStr, User.class);
+
         if(user == null){
             resultMap.put("success",false);
             resultMap.put("msg","未登录，需要登陆");

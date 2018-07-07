@@ -5,7 +5,10 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
-public class RedisPool {
+/**
+ * 单个Redis实例时使用的jedis池，现在项目使用分布式Redis,使用RedisShartedPool,这个类闲置,在同样被闲置的RedisPoolUtil中被引用
+ */
+public class RedisSingletonPool {
 
     //    设为static是为了在类加载时就完成JedisPool的初始化
     private static JedisPool jedisPool;
@@ -60,3 +63,4 @@ public class RedisPool {
 //        System.out.println("program is end");
 //    }
 }
+

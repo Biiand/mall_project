@@ -23,6 +23,15 @@
         <filter-name>characterEncodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+    
+    <filter>
+        <filter-name>sessionExpireTimeFilter</filter-name>
+        <filter-class>com.mmall.controller.common.SessionExpireFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>sessionExpireTimeFilter</filter-name>
+        <url-pattern>*.do</url-pattern>
+    </filter-mapping>
 
     <!--ServletRequestListener监听HTTP请求事件，Web服务器接收的每次请求都会通知该监听器-->
     <!--RequestContextListener将Spring容器与Web容器结合的更加密切-->

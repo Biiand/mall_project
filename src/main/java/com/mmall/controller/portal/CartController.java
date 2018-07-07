@@ -5,13 +5,17 @@ import com.mmall.common.ResponseCode;
 import com.mmall.common.ServiceResponse;
 import com.mmall.pojo.User;
 import com.mmall.service.ICartService;
+import com.mmall.util.CookieUtil;
+import com.mmall.util.JsonUtil;
+import com.mmall.util.RedisShardedPoolUtil;
 import com.mmall.vo.CartVo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Created by hasee on 2018/5/2.
@@ -29,8 +33,13 @@ public class CartController {
 //    或者在本例中在springMVC的配置文件中添加转换json的converter
 //    不添加的话就是传统的会将返回值当作jsp的文件名进行处理
     @ResponseBody
-    public ServiceResponse<CartVo> add(HttpSession session, Integer productId, Integer count){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServiceResponse<CartVo> add(HttpServletRequest request, Integer productId, Integer count){
+        String loginToken = CookieUtil.readLoginToken(request);
+        if (StringUtils.isBlank(loginToken)) {
+            return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
+        }
+        String jsonStr = RedisShardedPoolUtil.get(loginToken);
+        User user = JsonUtil.string2Obj(jsonStr, User.class);
         if(user == null){
             return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -39,8 +48,13 @@ public class CartController {
 
     @RequestMapping("update.do")
     @ResponseBody
-    public ServiceResponse<CartVo> update(HttpSession session, Integer productId, Integer count){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServiceResponse<CartVo> update(HttpServletRequest request, Integer productId, Integer count){
+        String loginToken = CookieUtil.readLoginToken(request);
+        if (StringUtils.isBlank(loginToken)) {
+            return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
+        }
+        String jsonStr = RedisShardedPoolUtil.get(loginToken);
+        User user = JsonUtil.string2Obj(jsonStr, User.class);
         if(user == null){
             return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -49,8 +63,13 @@ public class CartController {
 
     @RequestMapping("delete.do")
     @ResponseBody
-    public ServiceResponse<CartVo> delete(HttpSession session,String productIds){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServiceResponse<CartVo> delete(HttpServletRequest request,String productIds){
+        String loginToken = CookieUtil.readLoginToken(request);
+        if (StringUtils.isBlank(loginToken)) {
+            return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
+        }
+        String jsonStr = RedisShardedPoolUtil.get(loginToken);
+        User user = JsonUtil.string2Obj(jsonStr, User.class);
         if(user == null){
             return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -59,8 +78,13 @@ public class CartController {
 
     @RequestMapping("list.do")
     @ResponseBody
-    public ServiceResponse<CartVo> list(HttpSession session){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServiceResponse<CartVo> list(HttpServletRequest request){
+        String loginToken = CookieUtil.readLoginToken(request);
+        if (StringUtils.isBlank(loginToken)) {
+            return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
+        }
+        String jsonStr = RedisShardedPoolUtil.get(loginToken);
+        User user = JsonUtil.string2Obj(jsonStr, User.class);
         if(user == null){
             return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -69,13 +93,18 @@ public class CartController {
 
     /**
      * 全选
-     * @param session
+     * @param request
      * @return
      */
     @RequestMapping("select_all.do")
     @ResponseBody
-    public ServiceResponse<CartVo> selectAll(HttpSession session){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServiceResponse<CartVo> selectAll(HttpServletRequest request){
+        String loginToken = CookieUtil.readLoginToken(request);
+        if (StringUtils.isBlank(loginToken)) {
+            return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
+        }
+        String jsonStr = RedisShardedPoolUtil.get(loginToken);
+        User user = JsonUtil.string2Obj(jsonStr, User.class);
         if(user == null){
             return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -84,13 +113,18 @@ public class CartController {
 
     /**
      * 全不选
-     * @param session
+     * @param request
      * @return
      */
     @RequestMapping("un_select_all.do")
     @ResponseBody
-    public ServiceResponse<CartVo> unSelectAll(HttpSession session){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServiceResponse<CartVo> unSelectAll(HttpServletRequest request){
+        String loginToken = CookieUtil.readLoginToken(request);
+        if (StringUtils.isBlank(loginToken)) {
+            return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
+        }
+        String jsonStr = RedisShardedPoolUtil.get(loginToken);
+        User user = JsonUtil.string2Obj(jsonStr, User.class);
         if(user == null){
             return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -99,14 +133,19 @@ public class CartController {
 
     /**
      * 单独选
-     * @param session
+     * @param request
      * @param productId
      * @return
      */
     @RequestMapping("select.do")
     @ResponseBody
-    public ServiceResponse<CartVo> select(HttpSession session,Integer productId){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServiceResponse<CartVo> select(HttpServletRequest request,Integer productId){
+        String loginToken = CookieUtil.readLoginToken(request);
+        if (StringUtils.isBlank(loginToken)) {
+            return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
+        }
+        String jsonStr = RedisShardedPoolUtil.get(loginToken);
+        User user = JsonUtil.string2Obj(jsonStr, User.class);
         if(user == null){
             return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -115,14 +154,19 @@ public class CartController {
 
     /**
      * 单独不选
-     * @param session
+     * @param request
      * @param productId
      * @return
      */
     @RequestMapping("un_select.do")
     @ResponseBody
-    public ServiceResponse<CartVo> unSelect(HttpSession session,Integer productId){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServiceResponse<CartVo> unSelect(HttpServletRequest request,Integer productId){
+        String loginToken = CookieUtil.readLoginToken(request);
+        if (StringUtils.isBlank(loginToken)) {
+            return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
+        }
+        String jsonStr = RedisShardedPoolUtil.get(loginToken);
+        User user = JsonUtil.string2Obj(jsonStr, User.class);
         if(user == null){
             return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -131,13 +175,18 @@ public class CartController {
 
     /**
      * 获取购物车中的商品总数
-     * @param session
+     * @param request
      * @return
      */
     @RequestMapping("get_sum.do")
     @ResponseBody
-    public ServiceResponse<Integer> getSumOfProducts(HttpSession session){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServiceResponse<Integer> getSumOfProducts(HttpServletRequest request){
+        String loginToken = CookieUtil.readLoginToken(request);
+        if (StringUtils.isBlank(loginToken)) {
+            return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
+        }
+        String jsonStr = RedisShardedPoolUtil.get(loginToken);
+        User user = JsonUtil.string2Obj(jsonStr, User.class);
         if(user == null){
             return ServiceResponse.createBySuccess(0);
         }
