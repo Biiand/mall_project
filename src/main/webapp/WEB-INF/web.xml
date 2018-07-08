@@ -24,12 +24,32 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     
+    <!--使用spring session框架来实现单点登陆，将自己实现的filter注释掉，使用spring提供的SpringSessionRepositoryFilter-->
+    <!--<filter>-->
+        <!--<filter-name>sessionExpireTimeFilter</filter-name>-->
+        <!--<filter-class>com.mmall.controller.common.SessionExpireFilter</filter-class>-->
+    <!--</filter>-->
+    <!--<filter-mapping>-->
+        <!--<filter-name>sessionExpireTimeFilter</filter-name>-->
+        <!--<url-pattern>*.do</url-pattern>-->
+    <!--</filter-mapping>-->
+    
+    <!--使用spring session单点登陆时需要引入的filter,使用这个类做代理能简化使用spring框架中的filter的配置，详细看源码解释。
+        关于DelegatingFilterProxy：Proxy for a standard Servlet 2.3 Filter, delegating to a Spring-managed
+        bean that implements the Filter interface；
+        这个类是一个代理类，所有被它拦截的请求和响应都会被委派给Spring环境中的实现了Filter接口的类，这个类由filter-name标签指定。
+        所以filter-name标签中的类名拼写不能出错，刚开始将首字母大写，结果启动tomcat的时候报错“有filter启动失败”，查看tomcat的日志，
+        显示无法按照filter-name指定的类名找到类，将首字母改为小写后就正常了；
+        关于springSessionRepositoryFilter，spring中找不到这个类，但在applicationContext-SpringSession.xml中配置的bean,
+        RedisHttpSessionConfiguration的作用就是将spring中真正的处理session的filter,SessionRepositoryFilter以springSessionRepositoryFilter
+        的名字暴露出来。所以配置springSessionRepositoryFilter，最后实际是委派到SessionRepositoryFilter进行处理。
+        -->
     <filter>
-        <filter-name>sessionExpireTimeFilter</filter-name>
-        <filter-class>com.mmall.controller.common.SessionExpireFilter</filter-class>
+        <filter-name>springSessionRepositoryFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
     <filter-mapping>
-        <filter-name>sessionExpireTimeFilter</filter-name>
+        <filter-name>springSessionRepositoryFilter</filter-name>
         <url-pattern>*.do</url-pattern>
     </filter-mapping>
 
