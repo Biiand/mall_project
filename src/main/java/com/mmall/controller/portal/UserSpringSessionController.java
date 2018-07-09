@@ -24,7 +24,7 @@ import javax.servlet.http.HttpSession;
  * 使用spring session框架来实现单点登陆
  */
 @Controller
-@RequestMapping("/user/springSession/")
+@RequestMapping("/manage/user/springSession/")
 public class UserSpringSessionController {
 
     @Autowired
@@ -33,6 +33,10 @@ public class UserSpringSessionController {
     @RequestMapping(value = "login.do", method = RequestMethod.GET)
     @ResponseBody
     public ServiceResponse<User> login(String username, String password, HttpSession session, HttpServletResponse httpServletResponse) {
+//        测试抛出异常
+//        int a = 0;
+//        int b = 1000 / a;
+
         ServiceResponse<User> response = iUserService.login(username,password);
         if(response.isSuccess()){
             session.setAttribute(Const.CURRENT_USER,response.getData());

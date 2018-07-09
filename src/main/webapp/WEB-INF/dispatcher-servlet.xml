@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:p="http://www.springframework.org/schema/p"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
-       xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/mvc
        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-    <!--进行包扫描,扫描web相关的bean-->
-    <context:component-scan base-package="com.mmall" annotation-config="true"/>
+    <!--进行包扫描,只扫描有@Controller注解的web相关的bean，使用context:include-filter注解进行过滤-->
+    <context:component-scan base-package="com.mmall.controller" annotation-config="true">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
 
     <!--当在web.xml中将DispatcherServlet的ServletURL配置为“/”时，需要添加下面这个注解，用于访问静态资源，在SpringMVC将请求和Handler匹配的同时，
        这个配置会开启将请求向默认的servlet进行转发，这样就能访问到静态资源-->
@@ -53,6 +53,18 @@
         <property name="maxInMemorySize" value="4096" />
         <property name="defaultEncoding" value="UTF-8"/>
     </bean>
+    
+    <!--定义拦截器进行权限验证-->
+    <mvc:interceptors>
+        <!--直接在interceptors下配置bean会拦截所有的请求，业务只需要拦截一部分，所以在interceptor下配置-->
+        <mvc:interceptor>
+            <!--manage/* 只匹配到manage的下一级，manage/**匹配下一级及其子级-->
+            <mvc:mapping path="/manage/**"/>
+            <!--配置将不需要拦截器拦截的方法放过，例如登陆方法，也可以在拦截器中通过代码判断类名和方法名的方式实现，那样更灵活-->
+            <!--<mvc:exclude-mapping path="/manage/user/login.do"/>-->
+            <bean class="com.mmall.controller.common.interceptor.AuthorityInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
 
 
 </beans>

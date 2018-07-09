@@ -25,14 +25,15 @@
     </filter-mapping>
     
     <!--使用spring session框架来实现单点登陆，将自己实现的filter注释掉，使用spring提供的SpringSessionRepositoryFilter-->
-    <!--<filter>-->
-        <!--<filter-name>sessionExpireTimeFilter</filter-name>-->
-        <!--<filter-class>com.mmall.controller.common.SessionExpireFilter</filter-class>-->
-    <!--</filter>-->
-    <!--<filter-mapping>-->
-        <!--<filter-name>sessionExpireTimeFilter</filter-name>-->
-        <!--<url-pattern>*.do</url-pattern>-->
-    <!--</filter-mapping>-->
+    <filter>
+        <filter-name>sessionExpireTimeFilter</filter-name>
+        <filter-class>com.mmall.controller.common.SessionExpireFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>sessionExpireTimeFilter</filter-name>
+        <url-pattern>*.do</url-pattern>
+    </filter-mapping>
+    
     
     <!--使用spring session单点登陆时需要引入的filter,使用这个类做代理能简化使用spring框架中的filter的配置，详细看源码解释。
         关于DelegatingFilterProxy：Proxy for a standard Servlet 2.3 Filter, delegating to a Spring-managed
@@ -44,15 +45,16 @@
         RedisHttpSessionConfiguration的作用就是将spring中真正的处理session的filter,SessionRepositoryFilter以springSessionRepositoryFilter
         的名字暴露出来。所以配置springSessionRepositoryFilter，最后实际是委派到SessionRepositoryFilter进行处理。
         -->
-    <filter>
-        <filter-name>springSessionRepositoryFilter</filter-name>
-        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>springSessionRepositoryFilter</filter-name>
-        <url-pattern>*.do</url-pattern>
-    </filter-mapping>
+    <!--<filter>-->
+        <!--<filter-name>springSessionRepositoryFilter</filter-name>-->
+        <!--<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>-->
+    <!--</filter>-->
+    <!--<filter-mapping>-->
+        <!--<filter-name>springSessionRepositoryFilter</filter-name>-->
+        <!--<url-pattern>*.do</url-pattern>-->
+    <!--</filter-mapping>-->
 
+    
     <!--ServletRequestListener监听HTTP请求事件，Web服务器接收的每次请求都会通知该监听器-->
     <!--RequestContextListener将Spring容器与Web容器结合的更加密切-->
     <listener>

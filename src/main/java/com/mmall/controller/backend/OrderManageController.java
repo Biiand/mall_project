@@ -26,80 +26,39 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/manage/order")
 public class OrderManageController {
 
-    @Autowired
-    IUserService iUserService;
 
     @Autowired
     IOrderService iOrderService;
 
     @RequestMapping("get_order_list.do")
     @ResponseBody
-    public ServiceResponse<PageInfo> getOrderList(HttpServletRequest request,
-                                                  @RequestParam(value = "pageNum",defaultValue = "1") int pageNum,
+    public ServiceResponse<PageInfo> getOrderList(@RequestParam(value = "pageNum",defaultValue = "1") int pageNum,
                                                   @RequestParam(value = "pageSize",defaultValue = "10") int pageSize){
-        String loginToken = CookieUtil.readLoginToken(request);
-        if (StringUtils.isBlank(loginToken)) {
-            return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
-        }
-        String jsonStr = RedisShardedPoolUtil.get(loginToken);
-        User user = JsonUtil.string2Obj(jsonStr, User.class);
-        ServiceResponse response = iUserService.checkAdminBeforeOperate(user);
-        if(response.isSuccess()){
 //            管理员查询订单不需要用户id
-            return iOrderService.manageOrderList(pageNum,pageSize);
-        }
-        return response;
+        return iOrderService.manageOrderList(pageNum,pageSize);
     }
 
     @RequestMapping("get_order_detail.do")
     @ResponseBody
-    public ServiceResponse<OrderVo> getOrderDetail(HttpServletRequest request, Long orderNo){
-        String loginToken = CookieUtil.readLoginToken(request);
-        if (StringUtils.isBlank(loginToken)) {
-            return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
-        }
-        String jsonStr = RedisShardedPoolUtil.get(loginToken);
-        User user = JsonUtil.string2Obj(jsonStr, User.class);
-        ServiceResponse response = iUserService.checkAdminBeforeOperate(user);
-        if(response.isSuccess()){
-            return iOrderService.manageOrderDetail(orderNo);
-        }
-        return response;
+    public ServiceResponse<OrderVo> getOrderDetail(Long orderNo){
+
+        return iOrderService.manageOrderDetail(orderNo);
     }
 
     @RequestMapping("search_order.do")
     @ResponseBody
-    public ServiceResponse<PageInfo> searchOrder(HttpServletRequest request, Long orderNo,
+    public ServiceResponse<PageInfo> searchOrder(Long orderNo,
                                                 @RequestParam(value = "pageNum",defaultValue = "1") int pageNum,
                                                 @RequestParam(value = "pageSize",defaultValue = "10") int pageSize){
-        String loginToken = CookieUtil.readLoginToken(request);
-        if (StringUtils.isBlank(loginToken)) {
-            return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
-        }
-        String jsonStr = RedisShardedPoolUtil.get(loginToken);
-        User user = JsonUtil.string2Obj(jsonStr, User.class);
-        ServiceResponse response = iUserService.checkAdminBeforeOperate(user);
-        if(response.isSuccess()){
-//            管理员查询订单不需要用户id
-            return iOrderService.manageSearchOrder(orderNo,pageNum,pageSize);
-        }
-        return response;
+
+        return iOrderService.manageSearchOrder(orderNo,pageNum,pageSize);
     }
 
     @RequestMapping("send_out.do")
     @ResponseBody
-    public ServiceResponse<OrderVo> sendOutGoods(HttpServletRequest request , Long orderNo){
-        String loginToken = CookieUtil.readLoginToken(request);
-        if (StringUtils.isBlank(loginToken)) {
-            return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
-        }
-        String jsonStr = RedisShardedPoolUtil.get(loginToken);
-        User user = JsonUtil.string2Obj(jsonStr, User.class);
-        ServiceResponse response = iUserService.checkAdminBeforeOperate(user);
-        if(response.isSuccess()){
-            return iOrderService.manageSendOut(orderNo);
-        }
-        return response;
+    public ServiceResponse<OrderVo> sendOutGoods(Long orderNo){
+
+        return iOrderService.manageSendOut(orderNo);
     }
 
 

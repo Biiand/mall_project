@@ -31,28 +31,17 @@ public class SecKillManageController {
 
     /**
      * 添加或修改秒杀商品
-     * @param request
      * @param secKillProduct
      * @return
      */
     @RequestMapping(value = "save.do",method = RequestMethod.POST)
     @ResponseBody
-    public ServiceResponse add(HttpServletRequest request, SecKillProduct secKillProduct){
-        String loginToken = CookieUtil.readLoginToken(request);
-        if (StringUtils.isBlank(loginToken)) {
-            return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
+    public ServiceResponse add(SecKillProduct secKillProduct){
+        try {
+            return secKIllService.saveOrUpdate(secKillProduct);
+        } catch (Exception e) {
+            return ServiceResponse.createByErrorMessage(e.getMessage());
         }
-        String jsonStr = RedisShardedPoolUtil.get(loginToken);
-        User user = JsonUtil.string2Obj(jsonStr, User.class);
-        ServiceResponse response = userService.checkAdminBeforeOperate(user);
-        if(response.isSuccess()){
-            try {
-                return secKIllService.saveOrUpdate(secKillProduct);
-            } catch (Exception e) {
-                return ServiceResponse.createByErrorMessage(e.getMessage());
-            }
-        }
-        return response;
     }
 
     @RequestMapping(value = "list.do", method = RequestMethod.GET)

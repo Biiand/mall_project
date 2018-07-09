@@ -11,14 +11,24 @@
      http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
      http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-    <context:component-scan base-package="com.mmall" annotation-config="true"/>
-
+    <!--配置扫描除@Contorller注解标注的所有其它类，@Controller注解的类交给Spring-MVC的配置文件进行扫描，这样更规范；
+        annotation-config属性当使用了context:component-scan时默认就是true，写出来是为了多学习一个点-->
+    <context:component-scan base-package="com.mmall" annotation-config="true">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+    
+    <!--下面这个注解的作用和context:component-scan中的annotation-config属性的作用是一样的，所以当配置了包扫描的时候，就可以不用单独再配置；
+        它们的作用都是通过声明来激活@Autowired，@Resources，@Required等注解，详细的情况看annotation-config在Schema文件中的介绍；
+        通常在类中使用注解需要通过<bean class="">在spring容器中声明注解对应的PostProcessor，但对@Autowire这类常用的注解，spring提供了
+        annotation-config这个标签来简化常用注解的配置；不同的注解有不同的激活方式，比如注解@Transaction就需要配置<tx:annotation-driven>来激活-->
     <!--<context:annotation-config/>-->
     <aop:aspectj-autoproxy/>
 
     <!--导入分离出的一个spring配置文件，就是将一部分spring的配置分离到另一个xml文件中，在此导入-->
     <import resource="applicationContext-datasource.xml"/>
-    <import resource="applicationContext-SpringSession.xml"/>
+    
+    <!--项目主要使用使用自定义的单点登陆模块，spring session的配置先注释掉-->
+    <!--<import resource="applicationContext-SpringSession.xml"/>-->
 
 
 </beans>

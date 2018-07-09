@@ -26,75 +26,46 @@ import javax.servlet.http.HttpServletRequest;
 public class CategoryManageController {
 
     @Autowired
-    private IUserService iUserService;
-
-    @Autowired
     private ICategoryService iCategoryService;
 
-    @RequestMapping(value = "add_category.do",method = RequestMethod.POST)
+    @RequestMapping(value = "add_category.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServiceResponse addCategory(HttpServletRequest request, String categoryName,
-                                       @RequestParam(value = "parentId",defaultValue = "0") Integer parentId){
-        String loginToken = CookieUtil.readLoginToken(request);
-        if (StringUtils.isBlank(loginToken)) {
-            return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
-        }
-        String jsonStr = RedisShardedPoolUtil.get(loginToken);
-        User user = JsonUtil.string2Obj(jsonStr, User.class);
-        ServiceResponse response = iUserService.checkAdminBeforeOperate(user);
-        if(response.isSuccess()){
-            return iCategoryService.addCategory(categoryName,parentId);
-        }
-        return response;
+    public ServiceResponse addCategory(String categoryName,
+                                       @RequestParam(value = "parentId", defaultValue = "0") Integer parentId) {
+//        使用AuthorityInterceptor完成了登陆校验和权限校验，重构代码
+//        String loginToken = CookieUtil.readLoginToken(request);
+//        if (StringUtils.isBlank(loginToken)) {
+//            return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
+//        }
+//        String jsonStr = RedisShardedPoolUtil.get(loginToken);
+//        User user = JsonUtil.string2Obj(jsonStr, User.class);
+//        ServiceResponse response = iUserService.checkAdminBeforeOperate(user);
+//        if(response.isSuccess()){
+//            return iCategoryService.addCategory(categoryName,parentId);
+//        }
+//        return response;
+
+        return iCategoryService.addCategory(categoryName, parentId);
     }
 
-    @RequestMapping(value = "update_category_Name.do",method = RequestMethod.POST)
+    @RequestMapping(value = "update_category_Name.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServiceResponse updateCategoryName(HttpServletRequest request ,String categoryName,Integer categoryId){
-        String loginToken = CookieUtil.readLoginToken(request);
-        if (StringUtils.isBlank(loginToken)) {
-            return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
-        }
-        String jsonStr = RedisShardedPoolUtil.get(loginToken);
-        User user = JsonUtil.string2Obj(jsonStr, User.class);
-        ServiceResponse response = iUserService.checkAdminBeforeOperate(user);
-        if(response.isSuccess()){
-            return iCategoryService.updateCategoryName(categoryName,categoryId);
-        }
-        return response;
+    public ServiceResponse updateCategoryName(String categoryName, Integer categoryId) {
+
+        return iCategoryService.updateCategoryName(categoryName, categoryId);
     }
 
-    @RequestMapping(value = "get_category.do",method = RequestMethod.POST)
+    @RequestMapping(value = "get_category.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServiceResponse getChildrenParallelCategory(HttpServletRequest request,
-                                                       @RequestParam(value = "parentId",defaultValue = "0") Integer parentId){
-        String loginToken = CookieUtil.readLoginToken(request);
-        if (StringUtils.isBlank(loginToken)) {
-            return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
-        }
-        String jsonStr = RedisShardedPoolUtil.get(loginToken);
-        User user = JsonUtil.string2Obj(jsonStr, User.class);
-        ServiceResponse response = iUserService.checkAdminBeforeOperate(user);
-        if(response.isSuccess()){
-            return iCategoryService.getChildrenParallelCategory(parentId);
-        }
-        return response;
+    public ServiceResponse getChildrenParallelCategory(@RequestParam(value = "parentId", defaultValue = "0") Integer parentId) {
+
+        return iCategoryService.getChildrenParallelCategory(parentId);
     }
 
-    @RequestMapping(value = "get_all_category.do",method = RequestMethod.GET)
+    @RequestMapping(value = "get_all_category.do", method = RequestMethod.GET)
     @ResponseBody
-    public ServiceResponse getAllChildrenCategory(HttpServletRequest request,
-                                               @RequestParam(value = "categoryId",defaultValue = "0") Integer categoryId){
-        String loginToken = CookieUtil.readLoginToken(request);
-        if (StringUtils.isBlank(loginToken)) {
-            return ServiceResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
-        }
-        String jsonStr = RedisShardedPoolUtil.get(loginToken);
-        User user = JsonUtil.string2Obj(jsonStr, User.class);
-        ServiceResponse response = iUserService.checkAdminBeforeOperate(user);
-        if(response.isSuccess()){
-            return iCategoryService.getAllChildrenCategory(categoryId);
-        }
-        return response;
+    public ServiceResponse getAllChildrenCategory(@RequestParam(value = "categoryId", defaultValue = "0") Integer categoryId) {
+
+        return iCategoryService.getAllChildrenCategory(categoryId);
     }
 }
