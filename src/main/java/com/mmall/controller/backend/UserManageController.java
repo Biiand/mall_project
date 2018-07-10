@@ -34,7 +34,7 @@ public class UserManageController {
             User user = (User)response.getData();
             if(user.getRole() == Const.Role.ROLE_ADMIN){
                 CookieUtil.writeLoginToken(httpServletResponse,session.getId());
-                RedisShardedPoolUtil.setEx(session.getId(), JsonUtil.obj2String(user), Const.redisCacheExTime.SESSION_EXPIRE_TIME);
+                RedisShardedPoolUtil.setex(session.getId(), JsonUtil.obj2String(user), Const.redisCacheExTime.SESSION_EXPIRE_TIME);
             }else{
                 return ServiceResponse.createByErrorMessage("当前账号不是管理员，无法登陆");
             }

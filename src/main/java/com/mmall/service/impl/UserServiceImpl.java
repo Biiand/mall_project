@@ -114,7 +114,7 @@ public class UserServiceImpl implements IUserService {
 //        TokenCache.setKey(TokenCache.TOKEN_PREFIX+username,userToken);
 
 //        v2.0 : 将userToken放入Redis
-        RedisShardedPoolUtil.setEx(Const.TOKEN_PREFIX + username, userToken, 60 * 60);
+        RedisShardedPoolUtil.setex(Const.TOKEN_PREFIX + username, userToken, 60 * 60);
         return ServiceResponse.createBySuccess(userToken);
     }
 

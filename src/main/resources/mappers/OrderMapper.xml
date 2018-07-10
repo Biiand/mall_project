@@ -62,8 +62,16 @@
     from mmall_order
     order by create_time DESC
   </select>
-
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+  
+    <select id="selectOverTimeOrders" resultType="com.mmall.pojo.Order">
+      SELECT
+      id, order_no, user_id, status, create_time
+      from mmall_order
+      where status = #{status}
+      and <![CDATA[create_time <= #{closeDateTime}]]>
+    </select>
+    
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from mmall_order
     where id = #{id,jdbcType=INTEGER}
   </delete>
@@ -236,5 +244,11 @@
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = now()
     where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="closeOrderById" parameterType="int">
+    update mmall_order
+    set status = 0
+    where id = #{orderId}
   </update>
 </mapper>

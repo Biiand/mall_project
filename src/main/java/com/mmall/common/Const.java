@@ -16,6 +16,11 @@ public class Const {
 
     public static final String TOKEN_PREFIX = "token_";
 
+
+    public interface RedisLock {
+        String CLOSE_ORDER_TASK_LOCK = "closeOrderTaskLock";
+    }
+
     public interface redisCacheExTime{
         int SESSION_EXPIRE_TIME = 60 * 30; //设置登陆session过期时间30分钟
     }
@@ -60,6 +65,7 @@ public class Const {
         String RESPONSE_SUCCESS = "success";
         String RESPONSE_FAILED = "failed";
     }
+
 
 //    商品在售状态枚举
     public enum ProductStatusEnum{

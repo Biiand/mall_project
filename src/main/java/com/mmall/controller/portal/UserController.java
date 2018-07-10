@@ -35,7 +35,7 @@ public class UserController {
         ServiceResponse<User> response = iUserService.login(username,password);
         if(response.isSuccess()){
             CookieUtil.writeLoginToken(httpServletResponse,session.getId());
-            RedisShardedPoolUtil.setEx(session.getId(), JsonUtil.obj2String(response.getData()), Const.redisCacheExTime.SESSION_EXPIRE_TIME);
+            RedisShardedPoolUtil.setex(session.getId(), JsonUtil.obj2String(response.getData()), Const.redisCacheExTime.SESSION_EXPIRE_TIME);
         }
         return response;
     }
@@ -154,7 +154,7 @@ public class UserController {
 //        更新信息成功后更新Redis中的信息
         if(response.isSuccess()){
             String newJsonStr = JsonUtil.obj2String(response.getData());
-            RedisShardedPoolUtil.setEx(loginToken, newJsonStr, Const.redisCacheExTime.SESSION_EXPIRE_TIME);
+            RedisShardedPoolUtil.setex(loginToken, newJsonStr, Const.redisCacheExTime.SESSION_EXPIRE_TIME);
         }
         return response;
     }

@@ -5,11 +5,11 @@
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:jdbc="http://www.springframework.org/schema/jdbc"
        xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="
-     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
      http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
      http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
-     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
 
     <!--配置扫描除@Contorller注解标注的所有其它类，@Controller注解的类交给Spring-MVC的配置文件进行扫描，这样更规范；
         annotation-config属性当使用了context:component-scan时默认就是true，写出来是为了多学习一个点-->
@@ -22,8 +22,15 @@
         通常在类中使用注解需要通过<bean class="">在spring容器中声明注解对应的PostProcessor，但对@Autowire这类常用的注解，spring提供了
         annotation-config这个标签来简化常用注解的配置；不同的注解有不同的激活方式，比如注解@Transaction就需要配置<tx:annotation-driven>来激活-->
     <!--<context:annotation-config/>-->
+    <!--激活AspectJ的注解，例如@Aspect-->
     <aop:aspectj-autoproxy/>
-
+    
+    <!--使用Spring Schedule框架设置定时任务，激活相关的注解，如@Scheduled-->
+    <task:annotation-driven/>
+    
+    <!--添加这个配置是为了让idea能在applicationContext-datasource.xml中显示${}占位符代表的值，不配置对项目运行也没影响-->
+    <context:property-placeholder location="classpath:datasource.properties"/>
+    
     <!--导入分离出的一个spring配置文件，就是将一部分spring的配置分离到另一个xml文件中，在此导入-->
     <import resource="applicationContext-datasource.xml"/>
     

@@ -80,7 +80,17 @@
     </foreach>
   </select>
   
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+  <!--使用select for update来为该商品添加行级锁，在update之后释放，保证数据的一致性，
+      注意一定要有明确的主键定位到具体的数据，否则会被加上表锁，引发严重的阻塞，使用这条语句表还需要使用innoDB-->
+    <select id="selectStockById" resultType="_int" parameterType="integer">
+      select
+      stock
+      from mmall_product
+      where id = #{productId}
+      for update
+    </select>
+    
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from mmall_product
     where id = #{id,jdbcType=INTEGER}
   </delete>

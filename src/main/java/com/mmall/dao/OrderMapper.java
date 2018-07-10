@@ -27,6 +27,10 @@ public interface OrderMapper {
 
     List<Order> selectAllOrder();
 
+    List<Order> selectOverTimeOrders(@Param("status")int status,@Param("closeDateTime")String closeDateTime);
+
+    int closeOrderById(int orderId);
+
 
 
 

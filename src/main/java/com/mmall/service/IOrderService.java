@@ -54,4 +54,7 @@ public interface IOrderService {
 
     ServiceResponse manageSendOut(Long orderNo);
 
+//    定时关闭超时未支付的订单的方法
+    void closeOrder(int hour);
+
 }
