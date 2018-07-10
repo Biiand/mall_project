@@ -37,6 +37,7 @@ public class CloseOrderTask {
 //            执行关单
             closeOrder(lockKey);
             log.info("任务结束，释放redis锁:{}，ThreadName:{}", lockKey, Thread.currentThread().getName());
+            log.info("================================================================");
         } else {
 //            在获取锁失败后进一步检查是否是因为出现死锁，如果当前时间已经大于了锁的值，表示锁未被正确设置过期时间，这种情况在一台tomcat执行到已为锁赋值，
 //              但在为锁设置过期时间之前被强制关闭时就会出现，这时锁就不会被释放，形成死锁，这种情况下，就可以重新为锁赋新值和过期时间，获得该锁
@@ -50,11 +51,14 @@ public class CloseOrderTask {
                     log.info("获取redis锁成功:{}，ThreadName:{}", lockKey, Thread.currentThread().getName());
                     closeOrder(lockKey);
                     log.info("任务结束，释放redis锁:{}，ThreadName:{}", lockKey, Thread.currentThread().getName());
+                    log.info("================================================================");
                 } else {
                     log.info("获取redis锁失败:{}，ThreadName:{}", lockKey, Thread.currentThread().getName());
+                    log.info("================================================================");
                 }
             } else {
                 log.info("获取redis锁失败:{}，ThreadName:{}", lockKey, Thread.currentThread().getName());
+                log.info("================================================================");
             }
         }
     }

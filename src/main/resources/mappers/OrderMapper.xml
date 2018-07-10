@@ -63,9 +63,9 @@
     order by create_time DESC
   </select>
   
-    <select id="selectOverTimeOrders" resultType="com.mmall.pojo.Order">
+    <select id="selectOverTimeOrders" resultMap="BaseResultMap">
       SELECT
-      id, order_no, user_id, status, create_time
+      <include refid="Base_Column_List"/>
       from mmall_order
       where status = #{status}
       and <![CDATA[create_time <= #{closeDateTime}]]>
