@@ -1,6 +1,5 @@
 package com.mmall.util;
 
-import com.mmall.pojo.User;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.DeserializationConfig;
@@ -11,10 +10,7 @@ import org.codehaus.jackson.map.type.TypeFactory;
 import org.codehaus.jackson.type.JavaType;
 import org.codehaus.jackson.type.TypeReference;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 将对象转化为json字符串
@@ -26,7 +22,7 @@ public class JsonUtil {
 
     //    初始化ObjectMapper,非常重要，配置会影响json序列化的行为
     static {
-//        setting defalt POJO property inclusion strategy for serialization.设置为对象的所有字段都进行序列化
+//        setting default POJO property inclusion strategy for serialization.设置为对象的所有字段都进行序列化
 //        四种策略：ALWAYS,序列化所有的属性；NON_NULL,序列化值非null的属性；NON_DEFAULT,序列化值不是在类加载时就默认设置的属性；
 //        NON_EMPTY，序列化值非null且不为空的属性
         objectMapper.setSerializationInclusion(JsonSerialize.Inclusion.ALWAYS);

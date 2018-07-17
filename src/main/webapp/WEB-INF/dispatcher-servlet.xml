@@ -8,7 +8,9 @@
        http://www.springframework.org/schema/mvc
        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-    <!--进行包扫描,只扫描有@Controller注解的web相关的bean，使用context:include-filter注解进行过滤-->
+    <!--进行包扫描,包内的类将被自动注册为spring管理的bean,
+        只扫描有@Controller注解的web相关的bean，使用context:include-filter注解进行过滤，
+        因为SpringMVC有单独的ioc容器，作为Spring的子容器和Spring的ioc容器独立，子容器可以访问父容器，反之不行-->
     <context:component-scan base-package="com.mmall.controller" annotation-config="true">
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
@@ -24,8 +26,9 @@
         （2）提供一系列的功能支持：数据绑定，日期与数字的转换（@NumberFormat,@DateTimeFormat）,xml和json的默认读写支持
     -->
     <mvc:annotation-driven>
-        <!--message-converters标签内设置需要的MessageConverter,不注册的话就使用Spring默认的MessageConverter-->
+        <!--message-converters标签内注册指定的MessageConverter,该MessageConverter会覆盖默认的消息转换器-->
         <mvc:message-converters>
+            <!--注册消息转换器用于转换plain和html类型的文件-->
             <bean class="org.springframework.http.converter.StringHttpMessageConverter">
                 <property name="supportedMediaTypes">
                     <list>
@@ -45,9 +48,7 @@
         </mvc:message-converters>
     </mvc:annotation-driven>
 
-
-
-    <!-- 文件上传 -->
+    <!-- 处理文件上传 -->
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <property name="maxUploadSize" value="10485760"/> <!-- 10m -->
         <property name="maxInMemorySize" value="4096" />

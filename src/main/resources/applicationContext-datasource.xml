@@ -17,6 +17,7 @@
     <!--<context:property-placeholder location="classpath:datasource.properties"/>-->
     <bean id="propertyConfigurer"
           class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <!--order配置bean的初始化的优先级，越小的数优先级越高，默认是最低的优先级-->
         <property name="order" value="2"/>
         <property name="ignoreUnresolvablePlaceholders" value="true"/>
         <property name="locations">
@@ -43,8 +44,7 @@
         <property name="minIdle" value="${db.minIdle}"/>
         <!-- 最大建立连接等待时间。如果超过此时间将接到异常。设为－1表示无限制 -->
         <property name="maxWait" value="${db.maxWait}"/>
-        <!--#给出一条简单的sql语句进行验证 -->
-         <!--<property name="validationQuery" value="select getdate()" />-->
+        
         <property name="defaultAutoCommit" value="${db.defaultAutoCommit}"/>
         <!-- 回收被遗弃的（一般是忘了释放的）数据库连接到连接池中 -->
          <!--<property name="removeAbandoned" value="true" />-->
@@ -70,10 +70,10 @@
         <!--<property name="configLocation" value="classpath:mybatis_config.xml"/>-->
 
         <!--扫描pojo所在的包，这样在mapper.xml中使用到pojo类作为传入参数或返回结果集时就可以直接使用类名，不用
-        使用类的全路径名，dang当要扫描多个包时，每个包之间使用“;”隔开-->
-    <property name="typeAliasesPackage" value="com/mmall/pojo"/>
-
-        <!-- 分页插件 -->
+        使用类的全路径名，当要扫描多个包时，每个包之间使用“;”隔开-->
+        <property name="typeAliasesPackage" value="com/mmall/pojo"/>
+    
+            <!-- PageHelper分页插件 -->
         <property name="plugins">
             <array>
                 <bean class="com.github.pagehelper.PageHelper">
@@ -107,7 +107,8 @@
         <property name="dataSource" ref="dataSource"/>
         <property name="rollbackOnCommitFailure" value="true"/>
     </bean>
-    <!-- 使用@Transactional进行声明式事务管理需要声明下面这行，proxy-target-class属性是配置是使用AOP时是
+    <!-- 使用@Transactional进行声明式事务管理需要声明下面这行，用于激活@Transaction注解；
+         proxy-target-class属性是配置是使用AOP时是
          使用基于接口的JDK代理（设为false,默认）还是使用基于实体类的cglib代理（设为true），
          使用cglib代理后就不能使用JDK代理了，此时在接口上的@annotation注解就无效了，运行代理时要是没有找到
          对应的实体类，就会报错，实际上默认的使用JDK代理时spring会自动判断，如果目标类是接口就使用JDK代理，不是就

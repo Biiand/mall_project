@@ -12,6 +12,9 @@ public class RedisShardedPool {
 
     private static ShardedJedisPool pool;
 
+    //这里是采用分别读取配置的ip和端口，供initPool方法中初始化JedisShardInfo时分别调用的方式来连接Redis，
+    // 如果想增减Redis节点，需要修改代码和配置文件并重新编译部署，很麻烦。更好的方式是将所有配置的ip和port对拼接成一个字符串，
+    //读取后在initPool方法中分割成ip和port,然后循环的初始化JedisShardInfo,这样只用重启tomcat配置就能生效。
     private static String redisIp1 = PropertiesUtil.getProperty("redis1.ip");
     private static Integer redisPort1 = Integer.valueOf(PropertiesUtil.getProperty("redis1.port"));
     private static String redisIp2 = PropertiesUtil.getProperty("redis2.ip");

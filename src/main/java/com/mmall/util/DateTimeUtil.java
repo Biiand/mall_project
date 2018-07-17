@@ -25,11 +25,10 @@ public class DateTimeUtil {
     }
 
     public static Date strToDate(String dateTimeStr){
-        DateTimeFormatter formatter = DateTimeFormat.forPattern(STANDARD_FORMAT);
-        return formatter.parseDateTime(dateTimeStr).toDate();
+        return strToDate(dateTimeStr, STANDARD_FORMAT);
     }
 
     public static String dateToStr(Date date){
-        return date == null ? StringUtils.EMPTY : new DateTime(date).toString(STANDARD_FORMAT);
+        return dateToStr(date,STANDARD_FORMAT);
     }
 }
