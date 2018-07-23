@@ -29,5 +29,7 @@ public interface ProductMapper {
 //    返回值使用包装类，防止未查询到记录时返回null时出现类型不匹配而报错
     Integer selectStockById(int productId);
 
+    int updateStockById(@Param("productId")Integer productId,@Param("quantity") Integer quantity);
+
 
 }

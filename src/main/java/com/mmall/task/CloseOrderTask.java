@@ -40,7 +40,7 @@ public class CloseOrderTask {
      * 3.关单任务正确执行完成后直接释放锁，减少锁的持有时间；
      * 设置锁的有效期和最大持有时长要根据任务的执行时间来优化，在确保在持有锁的时间内关单任务能执行完成的前提下减少有效期和持有时间
      */
-    @Scheduled(cron = "0 */1 * * * ?")
+    @Scheduled(cron = "0 */10 * * * ?")
     public void closeOrderTaskV1() {
         log.info("关闭订单定时任务启动");
         long lockTimeout = Long.parseLong(PropertiesUtil.getProperty("redis_lock_timeout", "50000"));
@@ -92,7 +92,7 @@ public class CloseOrderTask {
     /**
      * 使用Redisson框架来实现锁
      */
-    @Scheduled(cron = "0 */1 * * * ?")
+    @Scheduled(cron = "0 */10 * * * ?")
     public void closeOrderTaskV2() {
         String lockKey = Const.RedisLock.CLOSE_ORDER_TASK_LOCK;
         RLock lock = manager.getRedisson().getLock(lockKey);

@@ -26,28 +26,28 @@ public class PropertiesUtil {
      * 以前直接在input stream里传file参数，需要确定file的绝对路径，对于变动的环境(现在都是部署在linux机器上)来说不太适用
      */
 
-    static{
+    static {
         String fileName = "mmall.properties";
         props = new Properties();
         try {
-            props.load(new InputStreamReader(PropertiesUtil.class.getClassLoader().getResourceAsStream(fileName),"UTF-8"));
+            props.load(new InputStreamReader(PropertiesUtil.class.getClassLoader().getResourceAsStream(fileName), "UTF-8"));
         } catch (IOException e) {
-            log.error("加载mmall.properties文件出错",e);
+            log.error("加载mmall.properties文件出错", e);
         }
     }
 
-    public static String getProperty(String key){
+    public static String getProperty(String key) {
 //        对key和value进行trim是为了避免受配置文件时添加的空格的影响
         String value = props.getProperty(key.trim());
-        if(StringUtils.isBlank(value)){
+        if (StringUtils.isBlank(value)) {
             return null;
         }
         return value.trim();
     }
 
-    public static String getProperty(String key,String defaultValue){
+    public static String getProperty(String key, String defaultValue) {
         String value = props.getProperty(key.trim());
-        if(StringUtils.isBlank(value)){
+        if (StringUtils.isBlank(value)) {
             return defaultValue;
         }
         return value.trim();

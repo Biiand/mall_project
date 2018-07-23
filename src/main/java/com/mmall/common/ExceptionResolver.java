@@ -35,7 +35,7 @@ public class ExceptionResolver implements HandlerExceptionResolver {
         ModelAndView modelAndView = new ModelAndView(new MappingJacksonJsonView());
         modelAndView.addObject("status", ResponseCode.ERROR.getCode());
         modelAndView.addObject("msg", "内部错误");
-        modelAndView.addObject("data", e.toString());//返回异常的名称，也可以不返回
+//        modelAndView.addObject("data", e.toString());//返回异常的名称，也可以不返回
         return modelAndView;
     }
 }

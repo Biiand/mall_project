@@ -36,7 +36,7 @@ public class ProductServiceImpl implements IProductService {
     @Autowired
     private CategoryMapper categoryMapper;
 
-    //    平级调用，service调service
+    //平级调用，service调service
     @Autowired
     private ICategoryService iCategoryService;
 
@@ -143,7 +143,8 @@ public class ProductServiceImpl implements IProductService {
     public ServiceResponse<PageInfo> searchProduct(String productName, Integer productId, Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
         if (StringUtils.isNotBlank(productName)) {
-            productName = new StringBuilder("%").append(productName).append("%").toString();
+            //从sql优化的角度看，尽量避免在模糊查询时使用“%”开头，因为这样字段的索引就不会起作用，查询效率就很低
+            productName = new StringBuilder().append(productName).append("%").toString();
         }
         List<Product> productList = productMapper.selectProductByNameOrId(productName, productId);
         List<ProductListVo> productListVoList = new ArrayList<>();
@@ -184,14 +185,15 @@ public class ProductServiceImpl implements IProductService {
 //            判断是否有该产品分类
             Category category = categoryMapper.selectByPrimaryKey(categoryId);
 //            在没找到产品分类和没有关键字的时候返回一个空的结果集，为了和前端的展示逻辑匹配，也要进行分页
-//          根据条件没查到任何数据时返回一个空的PageInfo给前端，不返回错误信息可以认为这种情况不是错误，只是没命中数据，注意也要按照分页的要求来进行返回，
+//              根据条件没查到任何数据时返回一个空的PageInfo给前端，不返回错误信息可以认为这种情况不是错误，
+//              只是没命中数据，注意也要按照分页的要求来进行返回，
             if (category == null && StringUtils.isBlank(keyword)) {
                 PageHelper.startPage(pageNum, pageSize);
                 List<ProductListVo> productListVoList = new ArrayList<>();
                 PageInfo pageInfo = new PageInfo(productListVoList);
                 return ServiceResponse.createBySuccess(pageInfo);
             }
-
+            //品类不为空的时候查询出品类下所有的子品类
             categoryIdList = iCategoryService.getAllChildrenCategory(categoryId).getData();
         }
 

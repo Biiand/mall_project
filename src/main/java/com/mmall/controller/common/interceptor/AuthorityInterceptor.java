@@ -18,6 +18,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.util.*;
 
+/**
+ *
+ */
 @Slf4j
 public class AuthorityInterceptor implements HandlerInterceptor {
 
@@ -44,7 +47,7 @@ public class AuthorityInterceptor implements HandlerInterceptor {
             return true;
         }
 
-//        在过滤登陆方法后记录日志是为了避免把账号密码明文计入日志，这样很危险
+//        在过滤登陆方法后记录日志是为了避免把账号密码的信息计入日志，这样很危险
         log.info("拦截的方法，类名：{}，方法名：{},请求参数：{}", beanName, methodName, parameters);
 
         User user = null;
@@ -58,6 +61,7 @@ public class AuthorityInterceptor implements HandlerInterceptor {
         if (user == null || (user.getRole() != Const.Role.ROLE_ADMIN)) {
 //       使用拦截器在验证未通过的情况下通过拦截器直接返回信息到前端，不会进入handler执行，所以不能通过handler的response进行返回；
 //          又由于interceptor的方法返回值是boolean，所以需要手动的接管HttpServletResponse实例，向前端写信息；
+
 //          首先清空response实例中存在的数据和信息，然后重新设置，不然会因为冲突出错
             response.reset();
 //            设置响应的编码，防止返回的数据乱码
@@ -103,6 +107,7 @@ public class AuthorityInterceptor implements HandlerInterceptor {
         while (it.hasNext()) {
             Map.Entry entry = (Map.Entry) it.next();
             String key = (String) entry.getKey();
+            //避免把密码明文记录进日志
             if (StringUtils.equals(key, "password")) {
                 continue;
             }

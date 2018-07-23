@@ -19,7 +19,7 @@ public interface OrderMapper {
 
     int updateByPrimaryKey(Order record);
 
-    Order selectByUserIdAndOrderNo(@Param("userId") Integer userId,@Param("orderNo") Long orderNo);
+    Order selectByUserIdAndOrderNo(@Param("userId") Integer userId, @Param("orderNo") Long orderNo);
 
     Order selectByOrderNo(Long orderNo);
 
@@ -27,11 +27,9 @@ public interface OrderMapper {
 
     List<Order> selectAllOrder();
 
-    List<Order> selectOverTimeOrders(@Param("status")int status,@Param("closeDateTime")String closeDateTime);
+    List<Order> selectOverTimeOrders(@Param("status") int status, @Param("closeDateTime") String closeDateTime);
 
-    int closeOrderById(int orderId);
-
-
+    int closeOrderByIds(@Param("orderNoList") List<Long> orderNoList);
 
 
 }

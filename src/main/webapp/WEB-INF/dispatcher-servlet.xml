@@ -11,8 +11,10 @@
     <!--进行包扫描,包内的类将被自动注册为spring管理的bean,
         只扫描有@Controller注解的web相关的bean，使用context:include-filter注解进行过滤，
         因为SpringMVC有单独的ioc容器，作为Spring的子容器和Spring的ioc容器独立，子容器可以访问父容器，反之不行-->
-    <context:component-scan base-package="com.mmall.controller" annotation-config="true">
+    <context:component-scan base-package="com.mmall.controller" use-default-filters="false" annotation-config="true">
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+        <context:include-filter type="annotation"
+                                expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
     </context:component-scan>
 
     <!--当在web.xml中将DispatcherServlet的ServletURL配置为“/”时，需要添加下面这个注解，用于访问静态资源，在SpringMVC将请求和Handler匹配的同时，
@@ -37,7 +39,9 @@
                     </list>
                 </property>
             </bean>
-            <!--这里使用Jackson作为Controller返回值的Json序列化的Converter,因为不是Spring默认的Converter,所以在pom中要引入Jackson的依赖-->
+            <!--这里使用Jackson作为Controller返回值的Json序列化的Converter,因为不是Spring默认的Converter,
+                所以在pom中要引入Jackson的依赖，MappingJacksonHttpMessageConverter使用Jackson来转换返回值，
+                使用已废弃的版本是因为项目使用的Jackson是1.9的，替代的Converter需要2.*的支持-->
             <bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
                 <property name="supportedMediaTypes">
                     <list>
@@ -50,12 +54,12 @@
 
     <!-- 处理文件上传 -->
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-        <property name="maxUploadSize" value="10485760"/> <!-- 10m -->
+        <property name="maxUploadSize" value="10485760"/> <!-- 上传文件最大为10m -->
         <property name="maxInMemorySize" value="4096" />
         <property name="defaultEncoding" value="UTF-8"/>
     </bean>
     
-    <!--定义拦截器进行权限验证-->
+    <!--定义拦截器进行管理员操作的权限验证-->
     <mvc:interceptors>
         <!--直接在interceptors下配置bean会拦截所有的请求，业务只需要拦截一部分，所以在interceptor下配置-->
         <mvc:interceptor>

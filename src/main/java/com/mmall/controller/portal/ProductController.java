@@ -24,7 +24,7 @@ public class ProductController {
     @RequestMapping(value = "detail.do")
     @ResponseBody
     public ServiceResponse<ProductDetailVo> getProductDetail(Integer productId){
-//        用户查看商品详情在未登录状态下也可以进行，所以就不进行权限校验了
+//        用户查看商品详情在未登录状态下也可以进行，所以就不进行登陆校验了
         return iProductService.getProductDetail(productId);
     }
 

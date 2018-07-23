@@ -9,7 +9,6 @@ public enum ResponseCode {
     ILLEGAL_ARGUMENT(2,"ILLEGAL_ARGUMENT"),
     NEED_LOGIN(10,"NEED_LOGIN");
 
-
     private int code;
     private String desc;
 

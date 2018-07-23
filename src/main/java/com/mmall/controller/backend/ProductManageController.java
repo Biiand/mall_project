@@ -1,16 +1,10 @@
 package com.mmall.controller.backend;
 
-import com.mmall.common.ResponseCode;
 import com.mmall.common.ServiceResponse;
 import com.mmall.pojo.Product;
-import com.mmall.pojo.User;
 import com.mmall.service.IFileService;
 import com.mmall.service.IProductService;
-import com.mmall.service.IUserService;
-import com.mmall.util.CookieUtil;
-import com.mmall.util.JsonUtil;
 import com.mmall.util.PropertiesUtil;
-import com.mmall.util.RedisShardedPoolUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,9 +25,6 @@ import java.util.Map;
 @Controller
 @RequestMapping("/manage/product")
 public class ProductManageController {
-
-    @Autowired
-    IUserService iUserService;
 
     @Autowired
     IProductService iProductService;
@@ -86,9 +77,16 @@ public class ProductManageController {
         return iProductService.searchProduct(productName, productId, pageNum, pageSize);
     }
 
+    /**
+     * 上传文件，upload_file为<input>的name属性名
+     * @param file
+     * @param request
+     * @return
+     */
     @RequestMapping(value = "upload.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServiceResponse uploadImages(@RequestParam(value = "upload_file", required = false) MultipartFile file, HttpServletRequest request) {
+    public ServiceResponse uploadImages(@RequestParam(value = "upload_file", required = false) MultipartFile file,
+                                        HttpServletRequest request) {
 
         /**
          * ServletContext的定义，每一个部署的web应用都有唯一的一个ServletContext对象，信息被该web应用下的servlet实例共享
@@ -103,15 +101,17 @@ public class ProductManageController {
             return ServiceResponse.createByErrorMessage("上传文件为空，请选择上传文件");
         }
         String path = request.getServletContext().getRealPath("upload");
+        //上传文件到FTP服务器
         String targetFileName = iFileService.uploadImages(file, path);
         if (StringUtils.isBlank(targetFileName)) {
             return ServiceResponse.createByErrorMessage("上传失败");
         }
-//           组装访问图片的url
+        //组装访问图片的url
         String url = PropertiesUtil.getProperty("ftp.server.http.prefix") + targetFileName;
         Map fileMap = new HashMap<>();
         fileMap.put("uri", targetFileName);
         fileMap.put("url", url);
+        //将访问图片的url返回给前端，在确认添加商品时和其它产品信息一起传给服务器存进数据库
         return ServiceResponse.createBySuccess(fileMap);
     }
 
@@ -141,12 +141,12 @@ public class ProductManageController {
             resultMap.put("msg", "上传失败");
             return resultMap;
         }
-//           组装访问图片的url
+        //组装访问图片的url
         String url = PropertiesUtil.getProperty("ftp.server.http.prefix") + targetFileName;
         resultMap.put("success", true);
         resultMap.put("msg", "上传成功");
         resultMap.put("file_path", url);
-//              simditor插件对返回标头的要求
+        //simditor插件对返回标头的要求
         response.addHeader("Access-Control-Allow-Headers", "X-File-Name");
 
         return resultMap;

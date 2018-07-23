@@ -38,7 +38,7 @@ public class UserServiceImpl implements IUserService {
             return ServiceResponse.createByErrorMessage("密码错误");
         }
 
-//        用户登陆成功后将用户的User对象的密码置为空字符串（""），为什么要调用Utils方法，而不是直接传一个"" ?
+//        用户登陆成功后将用户的User对象的密码置为空字符串（""），调用Utils方法，而不是直接传一个""是为了方便检索到 ?
 //        使用成熟的工具类能减少重复工作和提高程序的健壮性
         user.setPassword(StringUtils.EMPTY);
 
@@ -114,7 +114,7 @@ public class UserServiceImpl implements IUserService {
 //        TokenCache.setKey(TokenCache.TOKEN_PREFIX+username,userToken);
 
 //        v2.0 : 将userToken放入Redis
-        RedisShardedPoolUtil.setex(Const.TOKEN_PREFIX + username, userToken, 60 * 60);
+        RedisShardedPoolUtil.setex(Const.TOKEN_PREFIX + username, userToken, 60 * 10);
         return ServiceResponse.createBySuccess(userToken);
     }
 

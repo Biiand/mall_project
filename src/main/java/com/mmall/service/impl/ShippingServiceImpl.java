@@ -33,7 +33,7 @@ public class ShippingServiceImpl implements IShippingService {
         int resultCount = shippingMapper.insert(shipping);
         if(resultCount > 0){
             Map resultMap = new HashMap<>();
-//           使用shipping.getId()返回insert时数据库创建的主键，
+//           将新建的地址的id返回给前端，用于订单时使用，使用shipping.getId()返回insert时数据库创建的主键，
 //              因为在insert上使用了userGeneratedKey属性返回主键，并使用keyproperty = id将返回的键值绑定到id属性上
             resultMap.put("shippingId",shipping.getId());
             return ServiceResponse.createBySuccess("新建地址成功",resultMap);
@@ -43,7 +43,8 @@ public class ShippingServiceImpl implements IShippingService {
 
     @Override
     public ServiceResponse delete(Integer userId, Integer shippingId) {
-//        使用userId和shippingId共同限定删除的数据，避免出现横向越权问题，可以不用事前校验shippingId == null,因为值为null数据库就找不到数据进行删除
+//        使用userId和shippingId共同限定删除的数据，避免出现横向越权问题，
+//          可以不用事前校验shippingId == null,因为值为null数据库就找不到数据进行删除
         int resultCount = shippingMapper.deleteByUserIdAndPrimaryKey(userId,shippingId);
         if(resultCount > 0){
             return ServiceResponse.createBySuccessMessage("删除地址成功");

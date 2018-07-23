@@ -22,28 +22,25 @@ public class FileServiceImpl implements IFileService {
 
     @Override
     public String uploadImages(MultipartFile file, String path) {
+        log.info("file是否为空:{}", file.isEmpty());
         String originalFileName = file.getOriginalFilename();
-
-        log.info("file是否为空:{}",file.isEmpty());
-
-        String fileExtensionName = originalFileName.substring(originalFileName.lastIndexOf(".")+1);
+        String fileExtensionName = originalFileName.substring(originalFileName.lastIndexOf("."));//获得文件后缀名，带"."
 //        为上传的文件重新设一个唯一的文件名，解决上传的文件重名的问题
-        String uploadFileName = UUID.randomUUID().toString()+"."+fileExtensionName;
+        String uploadFileName = new StringBuilder().append(UUID.randomUUID().toString()).append(fileExtensionName).toString();
 
-        log.info("开始上传文件，原始文件名：{}，接收路径：{}，上传文件名：{}",originalFileName,path,uploadFileName);
+        log.info("开始上传文件，原始文件名：{}，接收路径：{}，上传文件名：{}", originalFileName, path, uploadFileName);
 
         File fileDir = new File(path);
 //        如果path下的文件夹不存在，则先创建该文件夹并设为可写
-        if(!fileDir.exists()){
+        if (!fileDir.exists()) {
             fileDir.setWritable(true);
 //            mkdir:创建path路径下的这个文件夹
 //            fileDir.mkdir();
 //            mkdirs:创建path路径下的这个文件夹是，包括需要但不存在的父文件夹
             fileDir.mkdirs();
         }
-
 //        创建path路径下的名为uploadFileName的文件的实例
-        File targetFile = new File(path,uploadFileName);
+        File targetFile = new File(path, uploadFileName);
 
         try {
 //            将上传文件保存到tomcat目录下
@@ -53,12 +50,12 @@ public class FileServiceImpl implements IFileService {
             Boolean isSuccess = FTPUtil.uploadFile(Lists.newArrayList(targetFile));
 //              执行上传FTP后不管是否成功都要将tomcat目录下的文件删除
             targetFile.delete();
-            if(isSuccess){
+            if (isSuccess) {
                 return targetFile.getName();
             }
             return null;
         } catch (IOException e) {
-            log.error("上传文件异常",e);
+            log.error("上传文件异常", e);
             return null;
         }
     }

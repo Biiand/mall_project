@@ -44,7 +44,17 @@
     from mmall_order_item
     where order_no = #{orderNo}
   </select>
-
+  
+  <select id="selectByOrderNos" resultMap="BaseResultMap" parameterType="list">
+    select
+    <include refid="Base_Column_List"/>
+    from mmall_order_item
+    where order_no IN
+    <foreach collection="orderNoList" index="index" item="orderNo" open="(" separator="," close=")">
+      #{orderNo}
+    </foreach>
+  </select>
+  
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from mmall_order_item
     where id = #{id,jdbcType=INTEGER}

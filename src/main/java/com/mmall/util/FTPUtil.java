@@ -60,7 +60,7 @@ public class FTPUtil {
     private boolean uploadFile(String remotePath, List<File> fileList) throws IOException {
         boolean isSuccess = false;
         FileInputStream fis = null;
-        if(connectServer(this.ip,this.user,this.password)){
+        if(connectServer(this.ip,this.user,this.password)){//连接ftp服务器
             try {
                 client.changeWorkingDirectory(remotePath);
                 client.setBufferSize(1024);

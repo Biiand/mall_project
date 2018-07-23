@@ -32,6 +32,8 @@ public class SessionExpireFilter implements Filter {
             if (user != null) {
                 RedisShardedPoolUtil.expire(loginToken, Const.redisCacheExTime.SESSION_EXPIRE_TIME);
             }
+            //统一在filter中将获取到的user对象通过request传递给Controller的handler，能极大的减少重复代码
+            request.setAttribute("user",user);
         }
         chain.doFilter(request,response);
     }

@@ -246,9 +246,20 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   
-  <update id="closeOrderById" parameterType="int">
+  <!--<update id="closeOrderById" parameterType="int">-->
+    <!--update mmall_order-->
+    <!--set status = 0-->
+    <!--where id = #{orderId}-->
+  <!--</update>-->
+  <!---->
+  
+  <update id="closeOrderByIds" parameterType="list">
     update mmall_order
-    set status = 0
-    where id = #{orderId}
+    set status = 0,
+    update_time = now()
+    where order_no in
+    <foreach collection="orderNoList" item="orderNo" open="(" separator="," close=")">
+      #{orderNo}
+    </foreach>
   </update>
 </mapper>

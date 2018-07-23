@@ -1,6 +1,7 @@
 package com.mmall.util;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.security.MessageDigest;
@@ -9,7 +10,11 @@ import java.security.MessageDigest;
 /**
  * Created by hasee
  */
+@Slf4j
 public class MD5Util {
+
+    private static final String hexDigits[] = {"0", "1", "2", "3", "4", "5",
+            "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"};
 
     private static String byteArrayToHexString(byte b[]) {
         StringBuffer resultSb = new StringBuffer();
@@ -45,7 +50,7 @@ public class MD5Util {
             else
                 resultString = byteArrayToHexString(md.digest(resultString.getBytes(charsetname)));
         } catch (Exception exception) {
-
+            log.error("MD5加密异常",exception);
         }
         return resultString.toUpperCase();
     }
@@ -54,9 +59,5 @@ public class MD5Util {
         origin = origin + PropertiesUtil.getProperty("password.salt", "");
         return MD5Encode(origin, "utf-8");
     }
-
-
-    private static final String hexDigits[] = {"0", "1", "2", "3", "4", "5",
-            "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"};
 
 }
